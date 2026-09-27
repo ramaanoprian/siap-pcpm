@@ -1,0 +1,10 @@
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+import type { Database } from './database.types';
+
+const url = import.meta.env.VITE_SUPABASE_URL as string | undefined;
+const key = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined;
+
+/** null berarti mode lokal: tanpa login, data hanya tersimpan di browser ini. */
+export const supabase: SupabaseClient<Database> | null = url && key ? createClient<Database>(url, key) : null;
+
+export const isOnline = supabase !== null;
