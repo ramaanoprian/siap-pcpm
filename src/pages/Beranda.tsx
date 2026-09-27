@@ -1,12 +1,12 @@
-import { ArrowRight, BookOpen, BookOpenCheck, CalendarDays, Flame, History, Layers, MessageSquareText, Target } from 'lucide-react';
+import { ArrowRight, BookOpen, BookOpenCheck, CalendarDays, ChartColumnBig, Flame, Layers, MessageSquareText, RotateCcw, Target } from 'lucide-react';
 import { MATERI } from '../data/materi';
 import { MODUL, FASE, namaModul } from '../data/modul';
 import { SOAL } from '../data/soal';
 import { ISTILAH } from '../data/istilah';
 import { useRows, usePengaturan, useStore } from '../lib/sync';
-import { byMulaiDesc, faseUntuk, rataSkorModul, streak, topikLemah } from '../lib/stats';
+import { byMulaiDesc, faseUntuk, labelPercobaan, rataSkorModul, soalJatuhTempo, soalPerHari, streak, TARGET_SOAL_DEFAULT, topikLemah } from '../lib/stats';
 import { Bar, Empty, toneSkor } from '../components';
-import { daysBetween, durasi, relatif, tanggalPanjang, today } from '../util';
+import { addDays, cx, daysBetween, durasi, parseDate, relatif, tanggalPanjang, today } from '../util';
 
 export function Beranda() {
   const store = useStore();
@@ -30,6 +30,11 @@ export function Beranda() {
   const beruntun = streak(percobaan, tugas);
   const dibaca = (p.preferensi.materi_dibaca as string[] | undefined) ?? [];
   const babBerikut = MATERI.find((b) => !dibaca.includes(b.id));
+  const target = (p.preferensi.target_soal as number | undefined) ?? TARGET_SOAL_DEFAULT;
+  const perHari = soalPerHari(percobaan);
+  const soalHariIni = perHari.get(hariIni) ?? 0;
+  const minggu = Array.from({ length: 7 }, (_, k) => addDays(hariIni, k - 6));
+  const perluUlang = soalJatuhTempo(status, hariIni).size;
   const sapaan = new Date().getHours() < 11 ? 'Selamat pagi' : new Date().getHours() < 15 ? 'Selamat siang' : new Date().getHours() < 19 ? 'Selamat sore' : 'Selamat malam';
 
   return (
@@ -64,6 +69,37 @@ export function Beranda() {
             <b>{jatuhTempo}</b>
             <span>kartu menunggu</span>
           </a>
+        </div>
+      </section>
+
+      <section className="card daily">
+        <Cincin nilai={soalHariIni} target={target} />
+        <div className="grow">
+          <p className="eyebrow">Target hari ini</p>
+          <h2>
+            {soalHariIni >= target ? 'Target tercapai! 🎉' : `${target - soalHariIni} soal lagi`}
+          </h2>
+          <ol className="week" aria-label="Soal 7 hari terakhir">
+            {minggu.map((d) => {
+              const n = perHari.get(d) ?? 0;
+              return (
+                <li key={d} className={cx(n >= target && 'full', n > 0 && n < target && 'part', d === hariIni && 'now')} title={`${d}: ${n} soal`}>
+                  <span>{['M', 'S', 'S', 'R', 'K', 'J', 'S'][parseDate(d).getDay()]}</span>
+                  <i aria-hidden>{n >= target ? '★' : ''}</i>
+                </li>
+              );
+            })}
+          </ol>
+        </div>
+        <div className="daily-actions">
+          <a className="btn primary" href="#/latihan">
+            Latihan <ArrowRight size={16} />
+          </a>
+          {perluUlang > 0 && (
+            <a className="btn tonal" href="#/latihan/ulang">
+              <RotateCcw size={16} /> Ulang {perluUlang}
+            </a>
+          )}
         </div>
       </section>
 
@@ -191,7 +227,7 @@ export function Beranda() {
                   <a href={`#/riwayat/${a.id}`}>
                     <span className={`skor-pill ${toneSkor(Number(a.skor))}`}>{Math.round(Number(a.skor ?? 0))}</span>
                     <span className="grow">
-                      <b>{namaModul(a.modul)}</b> <span className="muted">· {a.mode === 'simulasi' ? 'Simulasi' : 'Latihan'}</span>
+                      <b>{labelPercobaan(a, namaModul)}</b>
                       <small className="muted block">
                         {a.jumlah_benar}/{a.jumlah_soal} benar · {durasi(a.durasi_detik)} · {relatif(a.mulai_at)}
                       </small>
@@ -215,6 +251,25 @@ const TILES = [
   { href: '#/flashcard', nama: 'Flashcard', icon: Layers, warna: 'c-orange' },
   { href: '#/jadwal', nama: 'Jadwal', icon: CalendarDays, warna: 'c-purple' },
   { href: '#/wawancara', nama: 'Wawancara', icon: MessageSquareText, warna: 'c-pink' },
-  { href: '#/riwayat', nama: 'Riwayat', icon: History, warna: 'c-teal' },
+  { href: '#/progres', nama: 'Progres', icon: ChartColumnBig, warna: 'c-teal' },
 ];
+
+/** Cincin progres target soal harian. */
+function Cincin({ nilai, target }: { nilai: number; target: number }) {
+  const r = 34;
+  const k = 2 * Math.PI * r;
+  const f = Math.min(1, nilai / Math.max(1, target));
+  return (
+    <svg className={cx('ring', f >= 1 && 'full')} viewBox="0 0 84 84" role="img" aria-label={`${nilai} dari ${target} soal`}>
+      <circle cx="42" cy="42" r={r} className="ring-bg" />
+      <circle cx="42" cy="42" r={r} className="ring-fg" strokeDasharray={k} strokeDashoffset={k * (1 - f)} transform="rotate(-90 42 42)" />
+      <text x="42" y="40" textAnchor="middle" className="ring-n">
+        {nilai}
+      </text>
+      <text x="42" y="56" textAnchor="middle" className="ring-t">
+        dari {target}
+      </text>
+    </svg>
+  );
+}
 

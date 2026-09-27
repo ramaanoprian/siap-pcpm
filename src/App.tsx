@@ -5,6 +5,7 @@ import {
   BookOpenCheck,
   Brain,
   CalendarDays,
+  ChartColumnBig,
   History,
   House,
   Layers,
@@ -21,6 +22,7 @@ import { Beranda } from './pages/Beranda';
 import { Latihan } from './pages/Latihan';
 import { Materi } from './pages/Materi';
 import { Riwayat } from './pages/Riwayat';
+import { Progres } from './pages/Progres';
 import { Flashcard } from './pages/Flashcard';
 import { Psikologi } from './pages/Psikologi';
 import { Wawancara } from './pages/Wawancara';
@@ -40,6 +42,7 @@ const NAV: NavItem[] = [
   { id: 'beranda', nama: 'Beranda', icon: House, warna: 'c-blue' },
   { id: 'materi', nama: 'Materi', icon: BookOpen, warna: 'c-green' },
   { id: 'latihan', nama: 'Latihan', icon: BookOpenCheck, warna: 'c-blue' },
+  { id: 'progres', nama: 'Progres', icon: ChartColumnBig, warna: 'c-teal' },
   { id: 'flashcard', nama: 'Flashcard', icon: Layers, warna: 'c-orange' },
   { id: 'jadwal', nama: 'Jadwal', icon: CalendarDays, warna: 'c-purple' },
   { id: 'riwayat', nama: 'Riwayat', icon: History, warna: 'c-teal' },
@@ -146,6 +149,7 @@ function Shell({ email }: { email: string }) {
     case 'materi': page = <Materi id={param} />; break;
     case 'latihan': page = <Latihan awal={param} />; break;
     case 'riwayat': page = <Riwayat id={param} />; break;
+    case 'progres': page = <Progres />; break;
     case 'flashcard': page = <Flashcard />; break;
     case 'psikologi': page = <Psikologi />; break;
     case 'wawancara': page = <Wawancara id={param} />; break;

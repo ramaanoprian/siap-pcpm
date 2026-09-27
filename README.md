@@ -20,6 +20,8 @@ Bank soal ada di `src/data/` (`soal.ts`, `soal-materi.ts`, `soal-lanjutan.ts`). 
 - Semua perubahan disimpan dulu di browser, jadi aplikasi tetap bisa dipakai tanpa sinyal. Antrean perubahan dikirim ke Supabase setiap ada perubahan, setiap menit, dan saat koneksi kembali.
 - Push memakai upsert *last-write-wins* berdasarkan `client_updated_at`. Pull mengambil baris dengan `updated_at` lebih baru dari kursor per tabel.
 - Hapus = mengisi `deleted_at` (soft delete). Logikanya ada di `src/lib/sync.ts`.
+- Tidak ada tabel baru untuk fitur belajar: jadwal ulang soal dihitung dari `status_soal` (`jadwalUlang` di `src/lib/stats.ts`), tryout disimpan sebagai `percobaan` dengan `paket` berawalan `tryout`, dan target soal harian ada di `pengaturan.preferensi.target_soal`.
+- `public/sw.js` menyimpan aplikasi di cache supaya bisa dibuka offline dan dipasang di layar utama HP.
 - Skema ada di `supabase/migrations/0001_init_siap_pcpm_schema.sql` dan **sudah diterapkan**. Perubahan skema berikutnya dibuat sebagai file migrasi baru (`0002_…`).
 
 ## Pemasangan (sekali saja)

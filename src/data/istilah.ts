@@ -3,7 +3,7 @@ export interface Istilah {
   id: string;
   istilah: string;
   arti: string;
-  kategori: 'Moneter' | 'Sistem Pembayaran' | 'Makroprudensial' | 'Kelembagaan' | 'Ekonomi';
+  kategori: 'Moneter' | 'Sistem Pembayaran' | 'Makroprudensial' | 'Kelembagaan' | 'Ekonomi' | 'Fiskal' | 'Syariah & UMKM' | 'English';
 }
 
 export const ISTILAH: Istilah[] = [
@@ -43,6 +43,49 @@ export const ISTILAH: Istilah[] = [
   { id: 'output-gap', kategori: 'Ekonomi', istilah: 'Output gap', arti: 'Selisih antara PDB aktual dan PDB potensial. Output gap positif mengindikasikan tekanan inflasi dari sisi permintaan.' },
   { id: 'stagflasi', kategori: 'Ekonomi', istilah: 'Stagflasi', arti: 'Kondisi ketika inflasi tinggi terjadi bersamaan dengan pertumbuhan ekonomi yang lemah dan pengangguran tinggi.' },
   { id: 'eksi', kategori: 'Ekonomi', istilah: 'Ekonomi dan keuangan syariah', arti: 'Salah satu fokus pengembangan BI melalui penguatan rantai nilai halal dan instrumen keuangan syariah.' },
+  // ---------- Tambahan: ekonomi makro, fiskal, syariah & UMKM, English ----------
+  { id: 'pdb', kategori: 'Ekonomi', istilah: 'Produk Domestik Bruto (PDB)', arti: 'Nilai barang dan jasa akhir yang dihasilkan di suatu negara dalam satu periode. Pendekatan pengeluaran: C + I + G + (X − M).' },
+  { id: 'pdb-konstan', kategori: 'Ekonomi', istilah: 'PDB harga konstan', arti: 'PDB yang dihitung dengan harga tahun dasar (BPS: 2010), dipakai untuk mengukur pertumbuhan ekonomi riil tanpa pengaruh kenaikan harga.' },
+  { id: 'ihk', kategori: 'Ekonomi', istilah: 'Indeks Harga Konsumen (IHK)', arti: 'Indeks harga sekeranjang barang dan jasa yang dikonsumsi rumah tangga, dihitung BPS dan dipakai untuk mengukur inflasi.' },
+  { id: 'deflasi', kategori: 'Ekonomi', istilah: 'Deflasi', arti: 'Penurunan harga barang dan jasa secara umum (inflasi negatif). Berbeda dengan disinflasi, yaitu melambatnya laju inflasi.' },
+  { id: 'disinflasi', kategori: 'Ekonomi', istilah: 'Disinflasi', arti: 'Melambatnya laju inflasi, misalnya dari 5% menjadi 3%. Harga masih naik, tetapi lebih lambat.' },
+  { id: 'demand-pull', kategori: 'Ekonomi', istilah: 'Demand-pull inflation', arti: 'Inflasi karena permintaan agregat melebihi kapasitas produksi perekonomian.' },
+  { id: 'cost-push', kategori: 'Ekonomi', istilah: 'Cost-push inflation', arti: 'Inflasi dari sisi penawaran atau biaya, misalnya depresiasi rupiah, harga impor naik, atau gangguan distribusi.' },
+  { id: 'transaksi-berjalan', kategori: 'Ekonomi', istilah: 'Transaksi berjalan', arti: 'Bagian NPI berisi neraca barang, jasa, pendapatan primer (bunga, laba investasi), dan pendapatan sekunder (misalnya remitansi).' },
+  { id: 'transaksi-finansial', kategori: 'Ekonomi', istilah: 'Transaksi finansial', arti: 'Bagian NPI berisi investasi langsung, investasi portofolio (saham, surat utang), dan investasi lainnya (pinjaman, simpanan).' },
+  { id: 'depresiasi', kategori: 'Ekonomi', istilah: 'Depresiasi', arti: 'Melemahnya nilai tukar mata uang terhadap mata uang lain karena mekanisme pasar. Ekspor menjadi relatif murah, impor lebih mahal.' },
+  { id: 'phillips', kategori: 'Ekonomi', istilah: 'Kurva Phillips', arti: 'Hubungan terbalik jangka pendek antara inflasi dan pengangguran.' },
+  { id: 'multiplier', kategori: 'Ekonomi', istilah: 'Angka pengganda (multiplier)', arti: 'Kelipatan dampak perubahan belanja terhadap pendapatan nasional: 1 / (1 − MPC).' },
+  { id: 'tpt', kategori: 'Ekonomi', istilah: 'Tingkat Pengangguran Terbuka (TPT)', arti: 'Persentase pengangguran terhadap angkatan kerja, dihitung BPS.' },
+  { id: 'apbn', kategori: 'Fiskal', istilah: 'APBN', arti: 'Rencana keuangan tahunan pemerintah yang ditetapkan dengan undang-undang: pendapatan, belanja, dan pembiayaan.' },
+  { id: 'uu-keuangan-negara', kategori: 'Fiskal', istilah: 'UU No. 17 Tahun 2003', arti: 'Undang-undang tentang Keuangan Negara, dasar pengelolaan APBN.' },
+  { id: 'batas-defisit', kategori: 'Fiskal', istilah: 'Batas defisit dan utang', arti: 'PP 23/2003: defisit kumulatif APBN dan APBD maksimal 3% PDB; pinjaman kumulatif maksimal 60% PDB.' },
+  { id: 'pnbp', kategori: 'Fiskal', istilah: 'PNBP', arti: 'Penerimaan Negara Bukan Pajak, salah satu dari tiga kelompok pendapatan negara bersama perpajakan dan hibah.' },
+  { id: 'sbn', kategori: 'Fiskal', istilah: 'Surat Berharga Negara (SBN)', arti: 'Surat utang pemerintah untuk pembiayaan APBN, terdiri atas Surat Utang Negara (SUN) dan Surat Berharga Syariah Negara (SBSN).' },
+  { id: 'keseimbangan-primer', kategori: 'Fiskal', istilah: 'Keseimbangan primer', arti: 'Pendapatan negara dikurangi belanja di luar pembayaran bunga utang.' },
+  { id: 'ekspansif', kategori: 'Fiskal', istilah: 'Kebijakan fiskal ekspansif', arti: 'Menaikkan belanja atau menurunkan pajak untuk mendorong ekonomi. Kebalikannya kontraktif.' },
+  { id: 'crowding-out', kategori: 'Fiskal', istilah: 'Crowding out', arti: 'Pinjaman pemerintah yang besar mendorong suku bunga naik sehingga investasi swasta tersisih.' },
+  { id: 'automatic-stabilizer', kategori: 'Fiskal', istilah: 'Automatic stabilizer', arti: 'Komponen APBN yang otomatis meredam siklus ekonomi, misalnya penerimaan pajak turun dan bantuan sosial naik saat ekonomi lesu.' },
+  { id: 'murabahah', kategori: 'Syariah & UMKM', istilah: 'Murabahah', arti: 'Akad jual beli dengan harga pokok ditambah margin keuntungan yang disepakati.' },
+  { id: 'mudharabah', kategori: 'Syariah & UMKM', istilah: 'Mudharabah', arti: 'Kerja sama usaha: seluruh modal dari pemilik dana (shahibul maal), pengelola (mudharib) menyumbang keahlian, laba dibagi sesuai nisbah.' },
+  { id: 'musyarakah', kategori: 'Syariah & UMKM', istilah: 'Musyarakah', arti: 'Kerja sama usaha ketika kedua pihak sama-sama menyetor modal dan berbagi hasil serta risiko.' },
+  { id: 'ijarah', kategori: 'Syariah & UMKM', istilah: 'Ijarah', arti: 'Akad sewa-menyewa atas manfaat barang atau jasa.' },
+  { id: 'wadiah', kategori: 'Syariah & UMKM', istilah: 'Wadiah', arti: 'Akad titipan, misalnya pada giro dan tabungan syariah. Bonus boleh diberikan sukarela, bukan diperjanjikan.' },
+  { id: 'qardh', kategori: 'Syariah & UMKM', istilah: 'Qardh', arti: 'Pinjaman kebajikan tanpa imbalan; peminjam hanya mengembalikan pokok.' },
+  { id: 'riba-gharar-maysir', kategori: 'Syariah & UMKM', istilah: 'Riba, gharar, maysir', arti: 'Tiga unsur yang dilarang dalam transaksi syariah: tambahan yang tidak sah, ketidakjelasan berlebihan, dan spekulasi/judi.' },
+  { id: 'isef', kategori: 'Syariah & UMKM', istilah: 'ISEF', arti: 'Indonesia Sharia Economic Festival, diselenggarakan BI setiap tahun sejak 2014.' },
+  { id: 'rpim', kategori: 'Syariah & UMKM', istilah: 'RPIM', arti: 'Rasio Pembiayaan Inklusif Makroprudensial: mendorong bank menyalurkan pembiayaan ke UMKM dan perorangan berpenghasilan rendah.' },
+  { id: 'umkm-roadmap', kategori: 'Syariah & UMKM', istilah: 'Peta jalan UMKM BI', arti: 'UMKM potensial → siap pasar/siap akses keuangan → UMKM digital → UMKM ekspor.' },
+  { id: 'en-mitigate', kategori: 'English', istilah: 'mitigate', arti: 'Mengurangi atau meredam (risiko, dampak). Sinonim: reduce, alleviate.' },
+  { id: 'en-robust', kategori: 'English', istilah: 'robust', arti: 'Kuat dan tahan guncangan, misalnya "robust growth".' },
+  { id: 'en-curb', kategori: 'English', istilah: 'curb', arti: 'Mengekang atau membatasi, misalnya "measures to curb inflation".' },
+  { id: 'en-prudent', kategori: 'English', istilah: 'prudent', arti: 'Hati-hati dan bijak dalam mengambil keputusan.' },
+  { id: 'en-adverse', kategori: 'English', istilah: 'adverse', arti: 'Merugikan atau tidak menguntungkan.' },
+  { id: 'en-anchored', kategori: 'English', istilah: 'anchored (expectations)', arti: 'Ekspektasi yang tertambat atau stabil di sekitar target.' },
+  { id: 'en-whereas', kategori: 'English', istilah: 'whereas', arti: 'Sedangkan; menunjukkan pertentangan dua fakta.' },
+  { id: 'en-exposure', kategori: 'English', istilah: 'exposure', arti: 'Dalam keuangan: jumlah pinjaman atau investasi yang menanggung risiko pada suatu sektor.' },
+  { id: 'en-sluggish', kategori: 'English', istilah: 'sluggish', arti: 'Lesu atau lambat, misalnya "sluggish demand".' },
+  { id: 'en-surge', kategori: 'English', istilah: 'surge', arti: 'Lonjakan tajam, misalnya "a surge in food prices".' },
 ];
 
 export const istilahById = new Map(ISTILAH.map((i) => [i.id, i]));
