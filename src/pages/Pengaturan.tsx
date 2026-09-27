@@ -1,15 +1,37 @@
-import { useState } from 'react';
-import { KeyRound, LogOut } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Download, KeyRound, LogOut } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { usePengaturan } from '../lib/sync';
 import { PageHead, SyncBadge } from '../components';
+import { TARGET_SOAL_DEFAULT } from '../lib/stats';
 import { cx, daysBetween, today } from '../util';
+
+interface InstallPrompt extends Event {
+  prompt: () => Promise<void>;
+}
+
+/** Tombol pasang aplikasi (Chrome/Edge/Android); di iPhone lewat menu Bagikan → Tambah ke Layar Utama. */
+function usePasang() {
+  const [ev, setEv] = useState<InstallPrompt | null>(null);
+  useEffect(() => {
+    const on = (e: Event) => {
+      e.preventDefault();
+      setEv(e as InstallPrompt);
+    };
+    window.addEventListener('beforeinstallprompt', on);
+    return () => window.removeEventListener('beforeinstallprompt', on);
+  }, []);
+  return ev;
+}
 
 export function Pengaturan({ email }: { email: string }) {
   const [p, save] = usePengaturan();
   const tema = (p.preferensi.tema as string | undefined) ?? 'auto';
   const [pw, setPw] = useState('');
   const [pesan, setPesan] = useState<string | null>(null);
+  const target = (p.preferensi.target_soal as number | undefined) ?? TARGET_SOAL_DEFAULT;
+  const pasang = usePasang();
+  const terpasang = typeof window !== 'undefined' && window.matchMedia?.('(display-mode: standalone)').matches;
 
   return (
     <div className="page">
@@ -37,6 +59,16 @@ export function Pengaturan({ email }: { email: string }) {
             />
           </label>
         </div>
+        <div>
+          <span className="field">Target soal per hari</span>
+          <div className="seg">
+            {[10, 20, 30, 50].map((n) => (
+              <button key={n} type="button" className={cx(target === n && 'on')} onClick={() => save({ preferensi: { ...p.preferensi, target_soal: n } })}>
+                {n}
+              </button>
+            ))}
+          </div>
+        </div>
         <p className="muted small">
           {daysBetween(today(), p.tanggal_target)} hari lagi, sekitar {Math.round((daysBetween(today(), p.tanggal_target) * p.menit_per_hari) / 60)} jam belajar. Jadwal yang sudah disusun tidak ikut berubah. Hapus tugasnya di Jadwal bila ingin menyusun ulang.
         </p>
@@ -55,6 +87,24 @@ export function Pengaturan({ email }: { email: string }) {
             </button>
           ))}
         </div>
+      </section>
+
+      <section className="card">
+        <h2 className="label">Pasang di HP</h2>
+        {terpasang ? (
+          <p className="muted small">Aplikasi sudah terpasang. Materi dan latihan tetap bisa dibuka tanpa internet; progres dikirim saat online lagi.</p>
+        ) : (
+          <>
+            <p className="muted small">
+              Pasang Siap PCPM di layar utama supaya bisa dibuka seperti aplikasi, termasuk saat offline. Di iPhone: buka di Safari, ketuk Bagikan, lalu "Tambah ke Layar Utama".
+            </p>
+            {pasang && (
+              <button className="btn primary" onClick={() => pasang.prompt()}>
+                <Download size={16} /> Pasang aplikasi
+              </button>
+            )}
+          </>
+        )}
       </section>
 
       <section className="card">

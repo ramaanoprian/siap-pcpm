@@ -1,17 +1,17 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { ArrowLeft, ArrowRight, BookOpen, Bookmark, BookmarkCheck, Check, Clock, Shuffle, X } from 'lucide-react';
-import { MODUL, modulById, namaModul, type ModulPercobaan } from '../data/modul';
+import { ArrowLeft, ArrowRight, BookOpen, Bookmark, BookmarkCheck, Check, Clock, RotateCcw, Shuffle, Timer, X } from 'lucide-react';
+import { MODUL, modulById, namaModul, type ModulId, type ModulPercobaan } from '../data/modul';
 import { SOAL, type Soal } from '../data/soal';
 import { isGenerated, JUMLAH_POLA, soalAcak, TOPIK_GENERATOR } from '../data/generator';
 import { babById, MATERI } from '../data/materi';
 import { newId, usePengaturan, useRows, useStore, type StatusSoal } from '../lib/sync';
-import type { JawabanItem, PerTopik } from '../lib/stats';
+import { soalJatuhTempo, type JawabanItem, type PerTopik } from '../lib/stats';
 import type { Json } from '../lib/database.types';
 import { Bar, Empty, PageHead } from '../components';
 import { cx, go, jamMenit, shuffle } from '../util';
 
 type Mode = 'latihan' | 'simulasi';
-type Sumber = 'semua' | 'belum' | 'salah' | 'ditandai';
+type Sumber = 'semua' | 'ulang' | 'belum' | 'salah' | 'ditandai';
 
 /** Soal yang tampil di sesi: opsinya bisa diacak, `urutan[k]` = indeks opsi asli untuk opsi ke-k. */
 type SoalSesi = Soal & { urutan: number[] };
@@ -28,14 +28,16 @@ interface Sesi {
 
 const SUMBER: { id: Sumber; nama: string }[] = [
   { id: 'semua', nama: 'Semua soal' },
+  { id: 'ulang', nama: 'Jadwal ulang' },
   { id: 'belum', nama: 'Belum pernah' },
   { id: 'salah', nama: 'Terakhir salah' },
   { id: 'ditandai', nama: 'Ditandai' },
 ];
 
-function pilihSoal(modul: ModulPercobaan, sumber: Sumber, status: Map<string, StatusSoal>, topik: string[] | null): Soal[] {
+function pilihSoal(modul: ModulPercobaan, sumber: Sumber, status: Map<string, StatusSoal>, topik: string[] | null, jatuhTempo: Set<string>): Soal[] {
   let list = modul === 'campuran' ? SOAL : SOAL.filter((s) => s.modul === modul);
   if (topik) list = list.filter((s) => topik.includes(s.topik));
+  if (sumber === 'ulang') list = list.filter((s) => jatuhTempo.has(s.id));
   if (sumber === 'belum') list = list.filter((s) => !status.get(s.id)?.terakhir_dikerjakan);
   if (sumber === 'salah') list = list.filter((s) => status.get(s.id)?.terakhir_benar === false);
   if (sumber === 'ditandai') list = list.filter((s) => status.get(s.id)?.ditandai);
@@ -59,6 +61,27 @@ function susun(list: Soal[], jumlah: number): SoalSesi[] {
   return acak.sort((a, b) => (a.bacaan && b.bacaan ? a.id.localeCompare(b.id) : 0)).map(acakOpsi);
 }
 
+/**
+ * Komposisi tryout: tiga subtes Tes Pengetahuan dengan waktu per soal sesuai modul. Jumlah soal ini
+ * perkiraan untuk latihan, bukan komposisi resmi (BI tidak mengumumkan jumlah soal per subtes).
+ */
+const TRYOUT: { modul: ModulId; n: number }[] = [
+  { modul: 'potensi-dasar', n: 30 },
+  { modul: 'kebanksentralan', n: 30 },
+  { modul: 'english', n: 20 },
+];
+const TRYOUT_SOAL = TRYOUT.reduce((a, t) => a + t.n, 0);
+const TRYOUT_MENIT = Math.round(TRYOUT.reduce((a, t) => a + t.n * modulById(t.modul)!.menitPerSoal, 0));
+
+/** Soal tryout dikelompokkan per subtes; Potensi Dasar dicampur dengan soal acak. */
+function susunTryout(): SoalSesi[] {
+  return TRYOUT.flatMap(({ modul, n }) => {
+    const tetap = SOAL.filter((s) => s.modul === modul);
+    const pool = modul === 'potensi-dasar' ? [...shuffle(tetap).slice(0, n / 2), ...soalAcak(n)] : tetap;
+    return susun(pool, n);
+  });
+}
+
 /** Soal Potensi Dasar buatan generator ikut dicampur bila modulnya memuat Potensi Dasar. */
 const pakaiGenerator = (modul: ModulPercobaan, sumber: Sumber, topik: string[] | null) =>
   (modul === 'potensi-dasar' || modul === 'campuran') && (sumber === 'semua' || sumber === 'belum') && (!topik || topik.some((t) => TOPIK_GENERATOR.includes(t)));
@@ -80,10 +103,11 @@ function Pengaturan({ awal, onMulai }: { awal?: string; onMulai: (s: Sesi) => vo
   const topik = bab?.topik ? [bab.topik] : null;
   const [modul, setModul] = useState<ModulPercobaan>(babAwal?.modul ?? (MODUL.some((m) => m.id === awal) ? (awal as ModulPercobaan) : 'campuran'));
   const [mode, setMode] = useState<Mode>('latihan');
-  const [sumber, setSumber] = useState<Sumber>('semua');
-  const [jumlah, setJumlah] = useState(10);
+  const [sumber, setSumber] = useState<Sumber>(awal === 'ulang' ? 'ulang' : 'semua');
+  const [jumlah, setJumlah] = useState(awal === 'ulang' ? 20 : 10);
+  const jatuhTempo = useMemo(() => soalJatuhTempo(statusRows), [statusRows]);
 
-  const tetap = pilihSoal(modul, sumber, status, topik);
+  const tetap = pilihSoal(modul, sumber, status, topik, jatuhTempo);
   const generator = pakaiGenerator(modul, sumber, topik);
   const tersedia = generator ? [...tetap, ...soalAcak(Math.max(jumlah, 20), topik)] : tetap;
   const n = Math.min(jumlah, tersedia.length);
@@ -103,9 +127,53 @@ function Pengaturan({ awal, onMulai }: { awal?: string; onMulai: (s: Sesi) => vo
     });
   };
 
+  const mulaiTryout = () =>
+    onMulai({
+      id: newId(),
+      modul: 'campuran',
+      mode: 'simulasi',
+      paket: `tryout·${TRYOUT_SOAL}`,
+      soal: susunTryout(),
+      mulai: new Date().toISOString(),
+      batasDetik: TRYOUT_MENIT * 60,
+    });
+
   return (
     <div className="page">
       <PageHead title="Latihan" sub="Pilih modul dan mode, lalu mulai. Hasilnya tersimpan di Riwayat." />
+
+      {!bab && (
+        <section className="card tryout">
+          <span className="tryout-icon" aria-hidden>
+            <Timer size={28} />
+          </span>
+          <div className="grow">
+            <p className="eyebrow">Tryout PCPM</p>
+            <h2>
+              {TRYOUT_SOAL} soal · {TRYOUT_MENIT} menit
+            </h2>
+            <p className="small">
+              {TRYOUT.map((t) => `${namaModul(t.modul)} ${t.n}`).join(' · ')}. Skor keluar per subtes. Komposisinya perkiraan untuk latihan, bukan jumlah resmi.
+            </p>
+          </div>
+          <button className="btn primary big" onClick={mulaiTryout}>
+            Mulai tryout <ArrowRight size={16} />
+          </button>
+        </section>
+      )}
+
+      {!bab && jatuhTempo.size > 0 && sumber !== 'ulang' && (
+        <button type="button" className="card nudge ulang" onClick={() => { setSumber('ulang'); setModul('campuran'); setJumlah(20); }}>
+          <span className="nudge-icon" aria-hidden>
+            <RotateCcw size={20} />
+          </span>
+          <span className="grow">
+            <b>{jatuhTempo.size} soal perlu diulang hari ini</b>
+            <small className="block muted">Soal yang pernah salah muncul lagi besok, lalu 3, 7, dan 14 hari kemudian sampai kamu kuasai.</small>
+          </span>
+          <ArrowRight size={18} />
+        </button>
+      )}
 
       {bab && (
         <div className="filter-bar">
@@ -177,6 +245,7 @@ function Pengaturan({ awal, onMulai }: { awal?: string; onMulai: (s: Sesi) => vo
               {SUMBER.map((s) => (
                 <button key={s.id} type="button" className={cx(sumber === s.id && 'on')} onClick={() => setSumber(s.id)}>
                   {s.nama}
+                  {s.id === 'ulang' && ` (${jatuhTempo.size})`}
                 </button>
               ))}
             </div>
@@ -204,7 +273,7 @@ function Pengaturan({ awal, onMulai }: { awal?: string; onMulai: (s: Sesi) => vo
             Mulai {n} soal{mode === 'simulasi' ? ` · ${Math.round(n * menitPerSoal)} menit` : ''} <ArrowRight size={16} />
           </button>
         ) : (
-          <Empty>Tidak ada soal untuk pilihan ini. Coba pilih "Semua soal".</Empty>
+          <Empty>{sumber === 'ulang' ? 'Tidak ada soal yang jatuh tempo untuk diulang. Mantap!' : 'Tidak ada soal untuk pilihan ini. Coba pilih "Semua soal".'}</Empty>
         )}
       </section>
     </div>
@@ -319,7 +388,7 @@ function Kuis({ sesi, onSelesai, onBatal }: { sesi: Sesi; onSelesai: (id: string
         <div className="grow">
           <div className="row-between small">
             <span>
-              {namaModul(sesi.modul)} · Soal {i + 1} dari {sesi.soal.length}
+              {sesi.paket.startsWith('tryout') ? `Tryout · ${namaModul(soal.modul)}` : namaModul(sesi.modul)} · Soal {i + 1} dari {sesi.soal.length}
             </span>
             {sim ? (
               <span className={cx('timer', sisa < 60 && 'low')}>

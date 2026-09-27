@@ -3,7 +3,7 @@ import { ArrowLeft, Check, RotateCcw, Trash2, X } from 'lucide-react';
 import { MODUL, namaModul } from '../data/modul';
 import { cariSoal } from '../data/generator';
 import { useRows, useStore } from '../lib/sync';
-import { byMulaiDesc, type JawabanItem, type PerTopik } from '../lib/stats';
+import { byMulaiDesc, isTryout, labelPercobaan, type JawabanItem, type PerTopik } from '../lib/stats';
 import { Bar, Empty, PageHead, toneSkor } from '../components';
 import { cx, durasi, jam, tanggal } from '../util';
 
@@ -43,7 +43,7 @@ export function Riwayat({ id }: { id?: string }) {
               <a href={`#/riwayat/${a.id}`}>
                 <span className={`skor-pill ${toneSkor(Number(a.skor))}`}>{Math.round(Number(a.skor ?? 0))}</span>
                 <span className="grow">
-                  <b>{namaModul(a.modul)}</b> <span className="muted">· {a.mode === 'simulasi' ? 'Simulasi' : 'Latihan'}</span>
+                  <b>{labelPercobaan(a, namaModul)}</b>
                   <small className="muted block">
                     {tanggal(a.mulai_at)} {jam(a.mulai_at)} · {a.jumlah_benar}/{a.jumlah_soal} benar · {durasi(a.durasi_detik)}
                   </small>
@@ -61,7 +61,7 @@ export function Riwayat({ id }: { id?: string }) {
   );
 }
 
-function Sparkline({ values }: { values: number[] }) {
+export function Sparkline({ values }: { values: number[] }) {
   const w = 600;
   const h = 120;
   const x = (i: number) => (i / (values.length - 1)) * (w - 16) + 8;
@@ -90,6 +90,13 @@ function Detail({ id }: { id: string }) {
   const per = (p.per_topik as unknown as PerTopik) ?? {};
   const tampil = jawaban.filter((j) => !hanyaSalah || !j.benar);
   const skor = Math.round(Number(p.skor ?? 0));
+  // Tryout: skor dipecah per subtes (modul) dari jawaban.
+  const perSubtes = isTryout(p)
+    ? MODUL.map((m) => {
+        const js = jawaban.filter((j) => cariSoal(j.soal_id)?.modul === m.id);
+        return { nama: m.nama, benar: js.filter((j) => j.benar).length, total: js.length };
+      }).filter((x) => x.total)
+    : [];
 
   return (
     <div className="page">
@@ -97,7 +104,7 @@ function Detail({ id }: { id: string }) {
         <ArrowLeft size={14} /> Riwayat
       </a>
       <PageHead
-        title={`${namaModul(p.modul)} · ${p.mode === 'simulasi' ? 'Simulasi' : 'Latihan'}`}
+        title={labelPercobaan(p, namaModul)}
         sub={`${tanggal(p.mulai_at)} ${jam(p.mulai_at)} · ${durasi(p.durasi_detik)}`}
       >
         <a className="btn" href="#/latihan">
@@ -115,6 +122,26 @@ function Detail({ id }: { id: string }) {
           <Trash2 size={16} /> Hapus
         </button>
       </PageHead>
+
+      {perSubtes.length > 0 && (
+        <section className="card">
+          <h2 className="label">Skor per subtes</h2>
+          <div className="subtes-grid">
+            {perSubtes.map((x) => {
+              const pct = Math.round((x.benar / x.total) * 100);
+              return (
+                <div key={x.nama} className={cx('subtes', toneSkor(pct))}>
+                  <b className="subtes-skor">{pct}</b>
+                  <span>{x.nama}</span>
+                  <small className="muted">
+                    {x.benar}/{x.total} benar
+                  </small>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      )}
 
       <div className="grid-2">
         <section className="card score-card">

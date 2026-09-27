@@ -1,5 +1,6 @@
 import { MODUL, type Fase, type ModulId } from '../data/modul';
 import { SOAL } from '../data/soal';
+import { cariSoal } from '../data/generator';
 import { addDays, daysBetween, parseDate, today } from '../util';
 import type { JadwalTugas, Percobaan, StatusSoal } from './sync';
 
@@ -12,13 +13,21 @@ export interface JawabanItem {
 
 export const byMulaiDesc = (a: Percobaan, b: Percobaan) => b.mulai_at.localeCompare(a.mulai_at);
 
-/** Rata-rata skor 5 percobaan terakhir per modul (null bila belum pernah). */
+/** Skor sebuah percobaan untuk satu modul: skor langsung, atau bagian subtes itu bila percobaannya tryout. */
+function skorUntukModul(p: Percobaan, m: ModulId): number | null {
+  if (p.modul === m) return p.skor == null ? null : Number(p.skor);
+  if (!isTryout(p)) return null;
+  const js = ((p.jawaban as unknown as JawabanItem[] | null) ?? []).filter((j) => cariSoal(j.soal_id)?.modul === m);
+  return js.length ? (js.filter((j) => j.benar).length / js.length) * 100 : null;
+}
+
+/** Rata-rata skor 5 percobaan terakhir per modul, termasuk bagian subtes dari tryout (null bila belum pernah). */
 export function rataSkorModul(percobaan: Percobaan[]): Record<ModulId, number | null> {
   const out = {} as Record<ModulId, number | null>;
   const sorted = [...percobaan].sort(byMulaiDesc);
   for (const m of MODUL) {
-    const list = sorted.filter((p) => p.modul === m.id && p.skor != null).slice(0, 5);
-    out[m.id] = list.length ? Math.round(list.reduce((s, p) => s + Number(p.skor), 0) / list.length) : null;
+    const list = sorted.map((p) => skorUntukModul(p, m.id)).filter((x): x is number => x != null).slice(0, 5);
+    out[m.id] = list.length ? Math.round(list.reduce((s, x) => s + x, 0) / list.length) : null;
   }
   return out;
 }
@@ -135,3 +144,47 @@ export function susunJadwal(opts: {
   }
   return out;
 }
+
+// ---------- Pengulangan berjarak soal ----------
+
+/** Jarak hari sebelum soal yang pernah salah diulang: salah → besok, lalu makin jarang tiap kali benar. */
+export const JARAK_ULANG = [1, 3, 7, 14];
+
+/**
+ * Tanggal soal perlu diulang, atau null bila tidak perlu (belum pernah salah, atau sudah dikuasai:
+ * jawaban terakhir benar dan jumlah benar melebihi jumlah salah minimal 3).
+ */
+export function jadwalUlang(st: StatusSoal): string | null {
+  if (!st.terakhir_dikerjakan || !st.jumlah_salah) return null;
+  const lebih = st.jumlah_benar - st.jumlah_salah;
+  if (st.terakhir_benar && lebih >= 3) return null;
+  const langkah = st.terakhir_benar ? Math.min(Math.max(lebih + 1, 1), JARAK_ULANG.length - 1) : 0;
+  return addDays(localDay(st.terakhir_dikerjakan), JARAK_ULANG[langkah]);
+}
+
+/** Id soal yang jadwal ulangnya sudah tiba pada `hari`. */
+export function soalJatuhTempo(status: StatusSoal[], hari = today()): Set<string> {
+  return new Set(status.filter((s) => { const j = jadwalUlang(s); return j != null && j <= hari; }).map((s) => s.soal_id));
+}
+
+// ---------- Aktivitas harian ----------
+
+/** Jumlah soal yang dijawab per tanggal (YYYY-MM-DD, waktu lokal). */
+export function soalPerHari(percobaan: Percobaan[]): Map<string, number> {
+  const out = new Map<string, number>();
+  for (const p of percobaan) {
+    const jawaban = (p.jawaban as unknown as JawabanItem[] | null) ?? [];
+    const n = jawaban.length ? jawaban.filter((j) => j.pilih != null).length : p.jumlah_soal;
+    const d = localDay(p.mulai_at);
+    out.set(d, (out.get(d) ?? 0) + n);
+  }
+  return out;
+}
+
+export const TARGET_SOAL_DEFAULT = 20;
+
+export const isTryout = (p: Pick<Percobaan, 'paket'>) => !!p.paket?.startsWith('tryout');
+
+/** Nama percobaan untuk daftar: "Tryout PCPM" atau "<modul> · Latihan/Simulasi". */
+export const labelPercobaan = (p: Pick<Percobaan, 'paket' | 'modul' | 'mode'>, nama: (m: string) => string) =>
+  isTryout(p) ? 'Tryout PCPM' : `${nama(p.modul)} · ${p.mode === 'simulasi' ? 'Simulasi' : 'Latihan'}`;

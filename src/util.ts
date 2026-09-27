@@ -66,7 +66,7 @@ export function shuffle<T>(arr: T[]): T[] {
 
 export const cx = (...c: (string | false | null | undefined)[]) => c.filter(Boolean).join(' ');
 
-export type Route = 'beranda' | 'materi' | 'latihan' | 'riwayat' | 'flashcard' | 'psikologi' | 'wawancara' | 'jadwal' | 'pengaturan' | 'lainnya';
+export type Route = 'beranda' | 'materi' | 'latihan' | 'progres' | 'riwayat' | 'flashcard' | 'psikologi' | 'wawancara' | 'jadwal' | 'pengaturan' | 'lainnya';
 
 export function go(route: Route, param?: string) {
   location.hash = `/${route}${param ? `/${param}` : ''}`;
