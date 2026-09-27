@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { ArrowLeft, ArrowRight, BookOpen, Bookmark, BookmarkCheck, Check, Clock, Shuffle, X } from 'lucide-react';
 import { MODUL, modulById, namaModul, type ModulPercobaan } from '../data/modul';
 import { SOAL, type Soal } from '../data/soal';
-import { isGenerated, JUMLAH_POLA, soalAcak } from '../data/generator';
+import { isGenerated, JUMLAH_POLA, soalAcak, TOPIK_GENERATOR } from '../data/generator';
 import { babById, MATERI } from '../data/materi';
 import { newId, usePengaturan, useRows, useStore, type StatusSoal } from '../lib/sync';
 import type { JawabanItem, PerTopik } from '../lib/stats';
@@ -59,9 +59,9 @@ function susun(list: Soal[], jumlah: number): SoalSesi[] {
   return acak.sort((a, b) => (a.bacaan && b.bacaan ? a.id.localeCompare(b.id) : 0)).map(acakOpsi);
 }
 
-/** Soal hitungan baru ikut dicampur bila modulnya memuat Potensi Dasar. */
+/** Soal Potensi Dasar buatan generator ikut dicampur bila modulnya memuat Potensi Dasar. */
 const pakaiGenerator = (modul: ModulPercobaan, sumber: Sumber, topik: string[] | null) =>
-  (modul === 'potensi-dasar' || modul === 'campuran') && (sumber === 'semua' || sumber === 'belum') && (!topik || topik.includes('Numerik'));
+  (modul === 'potensi-dasar' || modul === 'campuran') && (sumber === 'semua' || sumber === 'belum') && (!topik || topik.some((t) => TOPIK_GENERATOR.includes(t)));
 
 /** `awal` dari URL: id modul (`#/latihan/english`) atau bab materi (`#/latihan/bab-moneter`). */
 export function Latihan({ awal }: { awal?: string }) {
@@ -77,7 +77,7 @@ function Pengaturan({ awal, onMulai }: { awal?: string; onMulai: (s: Sesi) => vo
   const dibaca = (p.preferensi.materi_dibaca as string[] | undefined) ?? [];
   const babAwal = awal?.startsWith('bab-') ? babById(awal.slice(4)) : undefined;
   const [bab, setBab] = useState(babAwal);
-  const topik = bab ? [bab.topik] : null;
+  const topik = bab?.topik ? [bab.topik] : null;
   const [modul, setModul] = useState<ModulPercobaan>(babAwal?.modul ?? (MODUL.some((m) => m.id === awal) ? (awal as ModulPercobaan) : 'campuran'));
   const [mode, setMode] = useState<Mode>('latihan');
   const [sumber, setSumber] = useState<Sumber>('semua');
@@ -85,9 +85,9 @@ function Pengaturan({ awal, onMulai }: { awal?: string; onMulai: (s: Sesi) => vo
 
   const tetap = pilihSoal(modul, sumber, status, topik);
   const generator = pakaiGenerator(modul, sumber, topik);
-  const tersedia = generator ? [...tetap, ...soalAcak(Math.max(jumlah, 20))] : tetap;
+  const tersedia = generator ? [...tetap, ...soalAcak(Math.max(jumlah, 20), topik)] : tetap;
   const n = Math.min(jumlah, tersedia.length);
-  const belumBaca = MATERI.filter((b) => (modul === 'campuran' || b.modul === modul) && !dibaca.includes(b.id));
+  const belumBaca = MATERI.filter((b) => b.modul && (modul === 'campuran' || b.modul === modul) && !dibaca.includes(b.id));
   const menitPerSoal = modul === 'campuran' ? 1 : modulById(modul)!.menitPerSoal;
 
   const mulai = () => {
@@ -126,7 +126,7 @@ function Pengaturan({ awal, onMulai }: { awal?: string; onMulai: (s: Sesi) => vo
           <span className="grow">
             <b>Baca materinya dulu</b>
             <small className="block muted">
-              {belumBaca.length} bab {namaModul(belumBaca[0].modul)} belum dibaca. Mulai dari "{belumBaca[0].judul}".
+              {belumBaca.length} bab {modul === 'campuran' ? 'materi' : namaModul(modul)} belum dibaca. Mulai dari "{belumBaca[0].judul}".
             </small>
           </span>
           <ArrowRight size={18} />
@@ -149,7 +149,7 @@ function Pengaturan({ awal, onMulai }: { awal?: string; onMulai: (s: Sesi) => vo
                 <Bar value={(selesai / total) * 100} tone="ok" />
                 <small className="muted">
                   {selesai}/{total} dikuasai
-                  {(m.id === 'potensi-dasar' || m.id === 'campuran') && ' · + soal hitungan acak'}
+                  {(m.id === 'potensi-dasar' || m.id === 'campuran') && ' · + soal acak tanpa batas'}
                 </small>
               </button>
             );
@@ -195,7 +195,7 @@ function Pengaturan({ awal, onMulai }: { awal?: string; onMulai: (s: Sesi) => vo
 
         {generator && (
           <p className="muted small row">
-            <Shuffle size={14} /> Termasuk soal hitungan baru dari {JUMLAH_POLA} pola dengan angka acak, jadi tidak ada yang sama persis. Urutan pilihan jawaban juga diacak.
+            <Shuffle size={14} /> Termasuk soal baru dari {JUMLAH_POLA} pola (numerik, verbal, logika) dengan angka dan kata acak, jadi hampir tidak ada yang sama persis. Urutan pilihan jawaban juga diacak.
           </p>
         )}
 
