@@ -13,7 +13,7 @@ Aplikasi belajar pribadi untuk persiapan tes PCPM Bank Indonesia. Bisa dibuka da
 | **Wawancara** | 15 pertanyaan umum, kerangka STAR, simpan otomatis, dan stopwatch latihan bicara |
 | **Psikologi** | Latihan refleksi diri 20 butir dengan profil 5 dimensi dan skor konsistensi (bukan tes resmi) |
 
-Bank soal ada di `src/data/` (`soal.ts` dan `soal-materi.ts`). Soal hitungan Potensi Dasar juga dibuat otomatis dari pola dengan angka acak (`generator.ts`), dan urutan pilihan jawaban diacak di setiap sesi. Isi materi ada di `materi.ts`; setiap fakta harus punya sumber resmi yang dicantumkan di bab tersebut. Soal-soalnya buatan sendiri untuk latihan pola, bukan soal resmi. `id` setiap soal, istilah, dan pertanyaan dipakai sebagai kunci di database, jadi jangan diganti setelah aplikasi dipakai.
+Bank soal ada di `src/data/` (`soal.ts`, `soal-materi.ts`, `soal-lanjutan.ts`). Soal Potensi Dasar (numerik, verbal, logika) juga dibuat otomatis dari pola dengan angka dan kata acak (`generator.ts`), dan urutan pilihan jawaban diacak di setiap sesi. Materi untuk semua subtes dan tahapan seleksi ada di `materi.ts` (Kebanksentralan) dan `materi-lain.ts` (tahapan seleksi, TPD, Pengetahuan Umum, English, psikologi); tipe dan kelompoknya di `materi-dasar.ts`. Setiap fakta harus punya sumber resmi yang dicantumkan di bab tersebut, dan setiap bab boleh punya daftar `video`. Soal-soalnya buatan sendiri untuk latihan pola, bukan soal resmi. `id` setiap soal, istilah, dan pertanyaan dipakai sebagai kunci di database, jadi jangan diganti setelah aplikasi dipakai.
 
 ## Cara kerja data
 

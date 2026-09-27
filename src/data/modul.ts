@@ -21,9 +21,9 @@ export const MODUL: ModulDef[] = [
   },
   {
     id: 'kebanksentralan',
-    nama: 'Kebanksentralan',
-    singkat: 'BI',
-    deskripsi: 'Kelembagaan BI, moneter, sistem pembayaran, makroprudensial, dan Rupiah.',
+    nama: 'Pengetahuan & BI',
+    singkat: 'TPU/TPK',
+    deskripsi: 'Ekonomi makro, fiskal, syariah, UMKM, dan kebanksentralan.',
     menitPerSoal: 0.75,
   },
   {

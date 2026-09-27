@@ -1,6 +1,6 @@
 import { soalById, type Soal } from './soal';
 
-// Soal hitungan yang dibuat dari pola dengan angka acak, supaya tidak bisa dihafal.
+// Soal Potensi Dasar yang dibuat dari pola dengan angka atau kata acak, supaya tidak bisa dihafal.
 // Id-nya berbentuk `gen-<pola>-<seed>`, dan soal yang sama selalu bisa dibuat ulang dari id itu
 // (dipakai Riwayat untuk menampilkan pembahasan). Soal ini tidak masuk tabel status_soal.
 
@@ -35,6 +35,73 @@ function opsiDari(r: Rng, benar: number, pengecoh: number[], fmt: (n: number) =>
   while (nilai.length < 5) nilai.push(nilai[nilai.length - 1] + Math.max(1, Math.round(benar * 0.07)));
   return { opsi: nilai.map(fmt), kunci: nilai.indexOf(benar) };
 }
+
+/** Lima opsi teks: jawaban benar + 4 pengecoh unik, urutan diacak dengan rng. `penutup` selalu di akhir. */
+function opsiTeks(r: Rng, benar: string, pengecoh: string[], penutup?: string) {
+  const unik = [...new Set(pengecoh.filter((x) => x !== benar && x !== penutup))];
+  const isi = [benar, ...acakRng(r, unik).slice(0, penutup ? 3 : 4)];
+  const opsi = acakRng(r, isi);
+  if (penutup) opsi.push(penutup);
+  return { opsi, kunci: opsi.indexOf(benar) };
+}
+
+function acakRng<T>(r: Rng, arr: readonly T[]): T[] {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(r() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// Pasangan kata untuk soal verbal. Arti mengikuti KBBI. Setiap jawaban dibuat unik dan tidak
+// bersinonim dengan jawaban lain, karena jawaban kata lain dipakai sebagai pengecoh.
+const SINONIM: [string, string][] = [
+  ['AKURAT', 'tepat'], ['ADAPTASI', 'penyesuaian'], ['AFIRMASI', 'penegasan'], ['AMBIGU', 'taksa'],
+  ['ANOMALI', 'penyimpangan'], ['APATIS', 'acuh tak acuh'], ['DEFISIT', 'kekurangan'], ['EKSPLISIT', 'tersurat'],
+  ['IMPLISIT', 'tersirat'], ['ESTIMASI', 'perkiraan'], ['INSINUASI', 'sindiran'], ['KENDALA', 'hambatan'],
+  ['KOMPATIBEL', 'cocok'], ['KONKRET', 'nyata'], ['KREDIBEL', 'tepercaya'], ['NISBI', 'relatif'],
+  ['OPSI', 'pilihan'], ['RASIONAL', 'masuk akal'], ['RELEVAN', 'berkaitan'], ['SIGNIFIKAN', 'berarti'],
+  ['SPEKULASI', 'untung-untungan'], ['STAGNAN', 'mandek'], ['SUBSTANSI', 'inti'], ['VALID', 'sahih'],
+  ['VAKUM', 'kosong'], ['VERIFIKASI', 'pemeriksaan'], ['ZENIT', 'titik puncak'], ['SPORADIS', 'sesekali'],
+  ['UTOPIA', 'khayalan'], ['LUGAS', 'apa adanya'], ['PARADIGMA', 'kerangka berpikir'], ['EVALUASI', 'penilaian'],
+  ['KONSISTEN', 'taat asas'], ['KONTRADIKSI', 'pertentangan'], ['INOVASI', 'pembaruan'], ['MUTAKHIR', 'terbaru'],
+  ['DIKOTOMI', 'pembagian dua'], ['APRESIASI', 'penghargaan'], ['KOLABORASI', 'kerja sama'], ['FRIKSI', 'pergesekan'],
+  ['PRAGMATIS', 'praktis'], ['KONKLUSI', 'kesimpulan'], ['KUALIFIKASI', 'syarat kecakapan'], ['NARASI', 'penceritaan'],
+];
+
+const ANTONIM: [string, string][] = [
+  ['ABSTRAK', 'konkret'], ['ABSOLUT', 'relatif'], ['EKSPLISIT', 'implisit'], ['STATIS', 'dinamis'],
+  ['SURPLUS', 'defisit'], ['EKSPOR', 'impor'], ['MAKRO', 'mikro'], ['OPTIMIS', 'pesimis'],
+  ['DEDUKTIF', 'induktif'], ['EKSTERNAL', 'internal'], ['HETEROGEN', 'homogen'], ['MAYORITAS', 'minoritas'],
+  ['KONVERGEN', 'divergen'], ['OBJEKTIF', 'subjektif'], ['EKSPANSI', 'kontraksi'], ['INFLASI', 'deflasi'],
+  ['APRESIASI (nilai tukar)', 'depresiasi'], ['NADIR', 'zenit'], ['VERTIKAL', 'horizontal'], ['FANA', 'baka'],
+  ['PERMANEN', 'temporer'], ['DEFENSIF', 'ofensif'], ['PROAKTIF', 'reaktif'], ['PROLOG', 'epilog'],
+  ['KLIMAKS', 'antiklimaks'], ['SINONIM', 'antonim'], ['SENTRALISASI', 'desentralisasi'],
+];
+
+interface Proposisi {
+  p: string;
+  bukanP: string;
+}
+// Rantai sebab-akibat untuk soal logika: p → q → r.
+const RANTAI: [Proposisi, Proposisi, Proposisi][] = [
+  [{ p: 'hujan turun', bukanP: 'hujan tidak turun' }, { p: 'jalan licin', bukanP: 'jalan tidak licin' }, { p: 'pengendara melambat', bukanP: 'pengendara tidak melambat' }],
+  [{ p: 'BI-Rate naik', bukanP: 'BI-Rate tidak naik' }, { p: 'bunga kredit naik', bukanP: 'bunga kredit tidak naik' }, { p: 'permintaan kredit turun', bukanP: 'permintaan kredit tidak turun' }],
+  [{ p: 'Rani lulus ujian', bukanP: 'Rani tidak lulus ujian' }, { p: 'Rani mendapat beasiswa', bukanP: 'Rani tidak mendapat beasiswa' }, { p: 'Rani melanjutkan S2', bukanP: 'Rani tidak melanjutkan S2' }],
+  [{ p: 'listrik padam', bukanP: 'listrik tidak padam' }, { p: 'server mati', bukanP: 'server tidak mati' }, { p: 'layanan terhenti', bukanP: 'layanan tidak terhenti' }],
+  [{ p: 'harga cabai naik', bukanP: 'harga cabai tidak naik' }, { p: 'inflasi pangan meningkat', bukanP: 'inflasi pangan tidak meningkat' }, { p: 'daya beli melemah', bukanP: 'daya beli tidak melemah' }],
+  [{ p: 'Dimas berolahraga', bukanP: 'Dimas tidak berolahraga' }, { p: 'Dimas sehat', bukanP: 'Dimas tidak sehat' }, { p: 'Dimas produktif', bukanP: 'Dimas tidak produktif' }],
+  [{ p: 'target tercapai', bukanP: 'target tidak tercapai' }, { p: 'tim mendapat bonus', bukanP: 'tim tidak mendapat bonus' }, { p: 'tim berlibur', bukanP: 'tim tidak berlibur' }],
+];
+
+const KELOMPOK_ORANG = ['peserta rapat', 'anggota tim riset', 'karyawan cabang Medan', 'mahasiswa magang', 'pengunjung pameran', 'analis divisi moneter'];
+const SIFAT: [string, string][] = [
+  ['membawa laptop', 'tidak membawa laptop'], ['terdaftar di sistem', 'tidak terdaftar di sistem'], ['mengikuti pelatihan', 'tidak mengikuti pelatihan'],
+  ['memiliki kartu akses', 'tidak memiliki kartu akses'], ['memakai seragam', 'tidak memakai seragam'], ['mengisi presensi', 'tidak mengisi presensi'],
+];
+const TAK_PASTI = 'Tidak dapat ditarik kesimpulan yang pasti';
+const kapital = (x: string) => x[0].toUpperCase() + x.slice(1);
 
 interface Pola {
   id: string;
@@ -189,18 +256,146 @@ const POLA: Pola[] = [
   },
 ];
 
-const POLA_BY_ID = new Map(POLA.map((p) => [p.id, p]));
+const POLA_KATA: Pola[] = [
+  {
+    id: 'sinonim',
+    topik: 'Verbal',
+    buat: (r) => {
+      const [kata, arti] = pick(r, SINONIM);
+      return {
+        teks: `Sinonim dari ${kata} adalah ...`,
+        ...opsiTeks(r, arti, SINONIM.filter(([k]) => k !== kata).map(([, a]) => a)),
+        bahas: `${kata} berarti ${arti}. Cek arti kata lain di KBBI (kbbi.kemendikdasmen.go.id) kalau ragu.`,
+      };
+    },
+  },
+  {
+    id: 'antonim',
+    topik: 'Verbal',
+    buat: (r) => {
+      const [kata, lawan] = pick(r, ANTONIM);
+      return {
+        teks: `Antonim (lawan kata) dari ${kata} adalah ...`,
+        ...opsiTeks(r, lawan, ANTONIM.filter(([k, l]) => k !== kata && l !== lawan).map(([, a]) => a)),
+        bahas: `Lawan kata ${kata.toLowerCase()} adalah ${lawan}.`,
+      };
+    },
+  },
+  {
+    id: 'ponens',
+    topik: 'Logika',
+    buat: (r) => {
+      const [p, q, s] = pick(r, RANTAI);
+      const tollens = r() < 0.5;
+      const teks = tollens
+        ? `Jika ${p.p}, maka ${q.p}. Ternyata ${q.bukanP}. Kesimpulan yang tepat adalah ...`
+        : `Jika ${p.p}, maka ${q.p}. Ternyata ${p.p}. Kesimpulan yang tepat adalah ...`;
+      const benar = kapital(tollens ? p.bukanP : q.p);
+      return {
+        teks,
+        ...opsiTeks(r, benar, [kapital(p.p), kapital(q.bukanP), kapital(p.bukanP), kapital(q.p), kapital(s.p)], TAK_PASTI),
+        bahas: tollens
+          ? `Modus tollens: p → q dan ¬q, maka ¬p. Karena ${q.bukanP}, pasti ${p.bukanP}.`
+          : `Modus ponens: p → q dan p, maka q. Karena ${p.p}, pasti ${q.p}.`,
+      };
+    },
+  },
+  {
+    id: 'silogisme',
+    topik: 'Logika',
+    buat: (r) => {
+      const [p, q, s] = pick(r, RANTAI);
+      const benar = `Jika ${p.p}, maka ${s.p}`;
+      return {
+        teks: `Jika ${p.p}, maka ${q.p}. Jika ${q.p}, maka ${s.p}. Kesimpulan yang sah adalah ...`,
+        ...opsiTeks(r, benar, [`Jika ${s.p}, maka ${p.p}`, `Jika ${p.bukanP}, maka ${s.bukanP}`, `${kapital(p.p)} dan ${s.bukanP}`, `Jika ${s.bukanP}, maka ${q.p}`], TAK_PASTI),
+        bahas: `Silogisme hipotetis: p → q dan q → r, maka p → r. Konvers (r → p) dan invers (¬p → ¬r) tidak sah.`,
+      };
+    },
+  },
+  {
+    id: 'kuantor',
+    topik: 'Logika',
+    buat: (r) => {
+      const orang = pick(r, KELOMPOK_ORANG);
+      const [m, bukanM] = pick(r, SIFAT);
+      const [pp, bukanPp] = pick(r, SIFAT.filter(([x]) => x !== m));
+      const jenis = int(r, 0, 2);
+      if (jenis === 0) {
+        const benar = `Semua ${orang} ${pp}`;
+        return {
+          teks: `Semua ${orang} ${m}. Semua yang ${m} ${pp}. Kesimpulan yang tepat adalah ...`,
+          ...opsiTeks(r, benar, [`Sebagian ${orang} ${bukanPp}`, `Semua yang ${pp} adalah ${orang}`, `Tidak ada ${orang} yang ${pp}`, `Sebagian ${orang} ${bukanM}`], TAK_PASTI),
+          bahas: `Himpunan ${orang} ada di dalam himpunan yang ${m}, dan himpunan itu ada di dalam yang ${pp}. Jadi semua ${orang} ${pp}. Kebalikannya belum tentu benar.`,
+        };
+      }
+      if (jenis === 1) {
+        return {
+          teks: `Ingkaran dari "Semua ${orang} ${m}" adalah ...`,
+          ...opsiTeks(r, `Ada ${orang} yang ${bukanM}`, [`Semua ${orang} ${bukanM}`, `Tidak ada ${orang} yang ${m}`, `Sebagian ${orang} ${m}`, `Semua yang ${m} adalah ${orang}`]),
+          bahas: `Ingkaran "semua A adalah B" adalah "ada (sebagian) A yang bukan B", bukan "semua A bukan B".`,
+        };
+      }
+      return {
+        teks: `Semua ${orang} ${m}. Sebagian karyawan kantor pusat ${m}. Kesimpulan yang tepat adalah ...`,
+        ...opsiTeks(r, TAK_PASTI, [`Sebagian karyawan kantor pusat adalah ${orang}`, `Semua karyawan kantor pusat adalah ${orang}`, `Tidak ada ${orang} yang bekerja di kantor pusat`, `Semua yang ${m} adalah ${orang}`]),
+        bahas: `Kedua kelompok sama-sama ${m}, tetapi tidak ada premis yang menghubungkan ${orang} dengan karyawan kantor pusat. Jadi tidak ada kesimpulan pasti.`,
+      };
+    },
+  },
+];
+
+POLA.push(
+  {
+    id: 'umur',
+    topik: 'Numerik',
+    buat: (r) => {
+      let anak = 0, x = 0, ayah = 0;
+      do {
+        anak = int(r, 6, 14);
+        x = int(r, 2, 10);
+        ayah = 3 * (anak + x) - x;
+      } while (ayah - anak < 20);
+      return {
+        teks: `Umur Nisa sekarang ${anak} tahun. ${x} tahun lagi, umur ayahnya tiga kali umur Nisa. Umur ayah sekarang adalah ... tahun.`,
+        ...opsiDari(r, ayah, [3 * anak, 3 * (anak + x), ayah + x, ayah - 2]),
+        bahas: `${x} tahun lagi Nisa berumur ${anak + x}, ayah 3 × ${anak + x} = ${3 * (anak + x)}. Umur ayah sekarang ${3 * (anak + x)} − ${x} = ${ayah} tahun.`,
+      };
+    },
+  },
+  {
+    id: 'diskon',
+    topik: 'Numerik',
+    buat: (r) => {
+      const harga = int(r, 4, 40) * 50_000;
+      const d1 = pick(r, [10, 20, 25, 30, 50]);
+      const d2 = pick(r, [10, 20, 25]);
+      const akhir = (harga * (100 - d1) * (100 - d2)) / 10_000;
+      return {
+        teks: `Sebuah jaket berharga ${rp(harga)} mendapat diskon ${d1}% + ${d2}%. Harga yang dibayar adalah ...`,
+        ...opsiDari(r, akhir, [(harga * (100 - d1 - d2)) / 100, (harga * (100 - d1)) / 100, (harga * (100 - d2)) / 100, akhir + harga * 0.05], rp),
+        bahas: `Diskon bertingkat dihitung berurutan: ${rp(harga)} × ${100 - d1}% = ${rp((harga * (100 - d1)) / 100)}, lalu × ${100 - d2}% = ${rp(akhir)}. Bukan diskon ${d1 + d2}% sekaligus.`,
+      };
+    },
+  },
+);
+
+const SEMUA_POLA = [...POLA, ...POLA_KATA];
+const POLA_BY_ID = new Map(SEMUA_POLA.map((p) => [p.id, p]));
 
 function dariPola(p: Pola, seed: number): Soal {
   return { id: `gen-${p.id}-${seed}`, modul: 'potensi-dasar', topik: p.topik, ...p.buat(mulberry32(seed)) };
 }
 
-/** Membuat `jumlah` soal hitungan baru dengan angka acak. */
-export function soalAcak(jumlah: number): Soal[] {
-  return Array.from({ length: jumlah }, (_, k) => {
-    const p = POLA[k % POLA.length];
-    return dariPola(p, Math.floor(Math.random() * 2 ** 31));
-  });
+/** Topik Potensi Dasar yang punya generator. */
+export const TOPIK_GENERATOR = [...new Set(SEMUA_POLA.map((p) => p.topik))];
+
+/** Membuat `jumlah` soal baru dengan angka/kata acak, opsional hanya untuk topik tertentu. */
+export function soalAcak(jumlah: number, topik?: string[] | null): Soal[] {
+  const pola = topik ? SEMUA_POLA.filter((p) => topik.includes(p.topik)) : SEMUA_POLA;
+  if (!pola.length) return [];
+  const mulai = Math.floor(Math.random() * pola.length);
+  return Array.from({ length: jumlah }, (_, k) => dariPola(pola[(mulai + k) % pola.length], Math.floor(Math.random() * 2 ** 31)));
 }
 
 export const isGenerated = (id: string) => id.startsWith('gen-');
@@ -214,4 +409,4 @@ export function cariSoal(id: string): Soal | undefined {
   return p ? dariPola(p, Number(m[2])) : undefined;
 }
 
-export const JUMLAH_POLA = POLA.length;
+export const JUMLAH_POLA = SEMUA_POLA.length;

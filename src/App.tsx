@@ -128,7 +128,7 @@ function useTheme() {
     const apply = () => {
       const dark = tema === 'gelap' || (tema === 'auto' && matchMedia('(prefers-color-scheme: dark)').matches);
       root.dataset.theme = dark ? 'dark' : 'light';
-      document.querySelector('meta[name=theme-color]')?.setAttribute('content', dark ? '#111318' : '#f8f9ff');
+      document.querySelector('meta[name=theme-color]')?.setAttribute('content', dark ? '#0e1621' : '#f2f6fb');
     };
     apply();
     const mq = matchMedia('(prefers-color-scheme: dark)');
@@ -170,8 +170,10 @@ function Shell({ email }: { email: string }) {
         <nav>
           {NAV.map((n) => (
             <a key={n.id} href={`#/${n.id}`} className={cx('side-link', route === n.id && 'on')} aria-current={route === n.id ? 'page' : undefined}>
-              <n.icon size={20} strokeWidth={1.9} />
-              {n.nama}
+              <span className={cx('side-icon', n.warna)} aria-hidden>
+                <n.icon size={19} strokeWidth={2.2} />
+              </span>
+              <span>{n.nama}</span>
             </a>
           ))}
         </nav>

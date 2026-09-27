@@ -85,7 +85,7 @@ export function Beranda() {
         <span className="grow">
           <small className="muted block">{babBerikut ? `Lanjut belajar · ${dibaca.length}/${MATERI.length} bab dibaca` : 'Semua bab sudah dibaca'}</small>
           <b>{babBerikut ? babBerikut.judul : 'Asah terus lewat latihan campuran'}</b>
-          <small className="muted block">{babBerikut ? `${babBerikut.menit} menit baca, lalu latihan soal ${babBerikut.topik}` : 'Soal hitungan selalu baru dan opsi jawaban diacak.'}</small>
+          <small className="muted block">{babBerikut ? `${babBerikut.menit} menit baca${babBerikut.video?.length ? `, ${babBerikut.video.length} video` : ''}` : 'Soal Potensi Dasar selalu baru dan opsi jawaban diacak.'}</small>
         </span>
         <ArrowRight size={20} />
       </a>

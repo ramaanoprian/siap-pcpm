@@ -1,34 +1,14 @@
-import type { ModulId } from './modul';
+import { cariYt, KELOMPOK, yt, type Bab, type KelompokId, type Sumber, type Video } from './materi-dasar';
+import { MATERI_LAIN } from './materi-lain';
 
 // Ringkasan materi Kebanksentralan. Setiap fakta diambil dari sumber resmi yang dicantumkan di
 // bagian `sumber` setiap bab (bi.go.id, teks undang-undang, ojk.go.id, lps.go.id, kemenkeu.go.id).
 // Angka yang sering berubah (BI-Rate terbaru, inflasi bulanan) sengaja tidak ditulis: cek tautannya.
 // `id` bab dipakai sebagai kunci progres baca, jadi jangan diganti.
 
-export interface Sumber {
-  nama: string;
-  url: string;
-}
+export * from './materi-dasar';
 
-export interface Bagian {
-  judul: string;
-  isi?: string[];
-  poin?: string[];
-}
-
-export interface Bab {
-  id: string;
-  modul: ModulId;
-  /** Topik soal yang dilatih setelah membaca bab ini (sama dengan `Soal.topik`). */
-  topik: string;
-  judul: string;
-  ringkas: string;
-  menit: number;
-  bagian: Bagian[];
-  /** Hal yang paling sering ditanyakan, untuk dibaca ulang sebelum latihan. */
-  ingat: string[];
-  sumber: Sumber[];
-}
+const BI_CHANNEL: Video = { judul: 'Semua video Bank Indonesia Channel', url: 'https://www.youtube.com/c/BankIndonesiaChannel/videos', kanal: 'Bank Indonesia Channel' };
 
 const UU_BI: Sumber = {
   nama: 'UU No. 23 Tahun 1999 tentang Bank Indonesia (teks resmi, arsip OJK)',
@@ -43,9 +23,10 @@ const BI_GOVERNANCE: Sumber = {
   url: 'https://www.bi.go.id/id/tentang-bi/profil/governance/default.aspx',
 };
 
-export const MATERI: Bab[] = [
+const MATERI_BI: Bab[] = [
   {
     id: 'kelembagaan',
+    kelompok: 'kebanksentralan',
     modul: 'kebanksentralan',
     topik: 'Kelembagaan',
     judul: 'Kelembagaan dan Tata Kelola BI',
@@ -101,10 +82,12 @@ export const MATERI: Bab[] = [
       'Dewan Gubernur: 1 Gubernur, 1 DGS, 4–7 Deputi Gubernur.',
       'Prinsip tata kelola: IKKAT.',
     ],
+    video: [yt('BI Menjawab: Kupas Tuntas Peran Bank Sentral di Indonesia', '_HSH5ilP97o', 'YouTube'), yt('Bank Indonesia: Independensi dan Kepercayaan', 'T3GCWczs42E', 'YouTube'), BI_CHANNEL],
     sumber: [UU_BI, UU_BI_BPK, BI_GOVERNANCE],
   },
   {
     id: 'moneter',
+    kelompok: 'kebanksentralan',
     modul: 'kebanksentralan',
     topik: 'Moneter',
     judul: 'Kebijakan Moneter',
@@ -170,6 +153,7 @@ export const MATERI: Bab[] = [
       'Sasaran inflasi 2024–2026: 2,5±1%.',
       'Strategi 4K TPIP/TPID.',
     ],
+    video: [yt('Mengenal Kebijakan Moneter Bank Indonesia', 'KMPnVroI2vE', 'Bank Indonesia Channel'), yt('[Bank Indonesia 101] Inflasi', '19l6NalTE4c', 'Bank Indonesia Channel'), cariYt('Bank Indonesia mekanisme transmisi kebijakan moneter')],
     sumber: [
       { nama: 'Bank Indonesia: Kebijakan Moneter', url: 'https://www.bi.go.id/id/fungsi-utama/moneter/default.aspx' },
       { nama: 'Bank Indonesia: BI-Rate', url: 'https://www.bi.go.id/id/fungsi-utama/moneter/bi-rate/default.aspx' },
@@ -182,6 +166,7 @@ export const MATERI: Bab[] = [
   },
   {
     id: 'makroprudensial',
+    kelompok: 'kebanksentralan',
     modul: 'kebanksentralan',
     topik: 'Makroprudensial & SSK',
     judul: 'Stabilitas Sistem Keuangan dan Makroprudensial',
@@ -231,6 +216,7 @@ export const MATERI: Bab[] = [
       'CCyB = penyangga modal kontrasiklis; LTV = rasio kredit terhadap nilai agunan properti.',
       'PLJP = fungsi lender of last resort BI.',
     ],
+    video: [yt('Mengenal Stabilitas Sistem Keuangan', 't_1coB08i6s', 'YouTube'), yt('Kebijakan Makroprudensial BI dan Stabilitas Sistem Keuangan', 'jIImH88NyVs', 'YouTube'), cariYt('Bank Indonesia kebijakan makroprudensial')],
     sumber: [
       { nama: 'Bank Indonesia: Ikhtisar Stabilitas Sistem Keuangan', url: 'https://www.bi.go.id/id/fungsi-utama/stabilitas-sistem-keuangan/ikhtisar/default.aspx' },
       { nama: 'Bank Indonesia: Instrumen Kebijakan Makroprudensial', url: 'https://www.bi.go.id/id/fungsi-utama/stabilitas-sistem-keuangan/instrumen-makroprudensial/default.aspx' },
@@ -239,6 +225,7 @@ export const MATERI: Bab[] = [
   },
   {
     id: 'sistem-pembayaran',
+    kelompok: 'kebanksentralan',
     modul: 'kebanksentralan',
     topik: 'Sistem Pembayaran',
     judul: 'Sistem Pembayaran',
@@ -292,6 +279,7 @@ export const MATERI: Bab[] = [
       'QRIS: diluncurkan 17 Agustus 2019; MDR UMI 0% sampai Rp500 ribu.',
       'BSPI 2030: Infrastruktur, Industri, Inovasi, Internasional, Rupiah Digital.',
     ],
+    video: [yt('[Bank Indonesia 101] QRIS: Satu QR, Semua Bisa Bayar', '-DshsgueEU0', 'Bank Indonesia 101'), yt('Bank Indonesia 101: Uang Elektronik', 'aLVZEmvxfk8', 'Bank Indonesia 101'), yt('[Bank Indonesia 101] Alat Pembayaran Menggunakan Kartu (APMK)', '2SI3lKCGVbc', 'Bank Indonesia 101'), cariYt('BI-FAST Bank Indonesia')],
     sumber: [
       { nama: 'Bank Indonesia: Sistem Pembayaran & Pengelolaan Uang Rupiah', url: 'https://www.bi.go.id/id/fungsi-utama/sistem-pembayaran/default.aspx' },
       { nama: 'Bank Indonesia: FAQ BI-FAST', url: 'https://www.bi.go.id/id/publikasi/ruang-media/news-release/Documents/FAQ_SP_2327021.pdf' },
@@ -301,6 +289,7 @@ export const MATERI: Bab[] = [
   },
   {
     id: 'rupiah',
+    kelompok: 'kebanksentralan',
     modul: 'kebanksentralan',
     topik: 'Rupiah',
     judul: 'Pengelolaan Uang Rupiah',
@@ -345,6 +334,7 @@ export const MATERI: Bab[] = [
       'Pencetak Rupiah: Perum Peruri, di dalam negeri.',
       'Cek keaslian: 3D (dilihat, diraba, diterawang).',
     ],
+    video: [yt('[Bank Indonesia 101] Ciri-ciri Keaslian Rupiah (CIKUR)', 'lveB_8RMD78', 'Bank Indonesia 101'), yt('Mengenal Ciri Keaslian Uang: Rectoverso dalam Rupiah', 'JAZirp8Y3l8', 'YouTube'), cariYt('Bank Indonesia Cinta Bangga Paham Rupiah')],
     sumber: [
       { nama: 'Bank Indonesia: Pengelolaan Uang Rupiah', url: 'https://www.bi.go.id/id/fungsi-utama/sistem-pembayaran/pengelolaan-rupiah/default.aspx' },
       { nama: 'Bank Indonesia: Pencegahan dan Pemberantasan Rupiah Palsu', url: 'https://www.bi.go.id/id/rupiah/pencegahan-rupiah-palsu/default.aspx' },
@@ -353,6 +343,7 @@ export const MATERI: Bab[] = [
   },
   {
     id: 'jaring-pengaman',
+    kelompok: 'kebanksentralan',
     modul: 'kebanksentralan',
     topik: 'Makroprudensial & SSK',
     judul: 'OJK, LPS, dan KSSK',
@@ -391,6 +382,11 @@ export const MATERI: Bab[] = [
       'LPS: jaminan maksimal Rp2 miliar per nasabah per bank; syarat 3T.',
       'KSSK: Kemenkeu, BI, OJK, LPS (UU 9/2016).',
     ],
+    video: [
+      { judul: 'Kanal resmi LPS (LPS_IDIC Official)', url: 'https://www.youtube.com/c/LPSIDICOfficial', kanal: 'LPS' },
+      { judul: 'Kanal edukasi OJK (Sikapiuangmu)', url: 'https://www.youtube.com/@sikapiuangmu', kanal: 'OJK' },
+      cariYt('KSSK Komite Stabilitas Sistem Keuangan penjelasan'),
+    ],
     sumber: [
       { nama: 'OJK: UU No. 21 Tahun 2011 tentang OJK', url: 'https://www.ojk.go.id/id/regulasi/otoritas-jasa-keuangan/undang-undang/Pages/undang-undang-nomor-21-tahun-2011-tentang-otoritas-jasa-keuangan.aspx' },
       { nama: 'OJK: Tugas dan Fungsi', url: 'https://ojk.go.id/id/tentang-ojk/pages/tugas-dan-fungsi.aspx' },
@@ -404,4 +400,9 @@ export const MATERI: Bab[] = [
   },
 ];
 
+export const MATERI: Bab[] = [...MATERI_BI, ...MATERI_LAIN].sort(
+  (a, b) => KELOMPOK.findIndex((k) => k.id === a.kelompok) - KELOMPOK.findIndex((k) => k.id === b.kelompok),
+);
+
 export const babById = (id: string | undefined) => MATERI.find((b) => b.id === id);
+export const babKelompok = (k: KelompokId) => MATERI.filter((b) => b.kelompok === k);

@@ -1,4 +1,5 @@
 import type { ModulId } from './modul';
+import { SOAL_LANJUTAN } from './soal-lanjutan';
 import { SOAL_MATERI } from './soal-materi';
 
 export interface Soal {
@@ -501,6 +502,9 @@ export const SOAL: Soal[] = [
 
   // ---------------- Kebanksentralan dari bab Materi ----------------
   ...SOAL_MATERI,
+
+  // ---------------- Pengetahuan Umum, English, dan TPD tambahan ----------------
+  ...SOAL_LANJUTAN,
 ];
 
 export const soalById = new Map(SOAL.map((s) => [s.id, s]));
