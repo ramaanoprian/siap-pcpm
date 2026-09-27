@@ -5,6 +5,7 @@ Aplikasi belajar pribadi untuk persiapan tes PCPM Bank Indonesia. Bisa dibuka da
 | Menu | Isi |
 | --- | --- |
 | **Beranda** | Hitung mundur ke tanggal tes, fase belajar, tugas hari ini, skor per modul, dan topik terlemah |
+| **Materi** | 6 bab rangkuman Kebanksentralan (kelembagaan, moneter, makroprudensial, sistem pembayaran, Rupiah, OJK/LPS/KSSK) dari sumber resmi, dengan tautan sumber di setiap bab dan tombol langsung ke latihan topik yang sama |
 | **Latihan** | Potensi Dasar, Kebanksentralan, English, atau Campuran. Mode *latihan* menampilkan pembahasan langsung, mode *simulasi* memakai batas waktu. Soal bisa difilter: belum pernah, terakhir salah, atau ditandai |
 | **Riwayat** | Tren skor, hasil per topik, dan pembahasan setiap percobaan |
 | **Flashcard** | 36 istilah kebanksentralan dengan sistem Leitner 3 kotak (ulang 1, 3, dan 7 hari) |
@@ -12,7 +13,7 @@ Aplikasi belajar pribadi untuk persiapan tes PCPM Bank Indonesia. Bisa dibuka da
 | **Wawancara** | 15 pertanyaan umum, kerangka STAR, simpan otomatis, dan stopwatch latihan bicara |
 | **Psikologi** | Latihan refleksi diri 20 butir dengan profil 5 dimensi dan skor konsistensi (bukan tes resmi) |
 
-Bank soal ada di `src/data/`. Soal-soalnya buatan sendiri untuk latihan pola, bukan soal resmi. `id` setiap soal, istilah, dan pertanyaan dipakai sebagai kunci di database, jadi jangan diganti setelah aplikasi dipakai.
+Bank soal ada di `src/data/` (`soal.ts` dan `soal-materi.ts`). Soal hitungan Potensi Dasar juga dibuat otomatis dari pola dengan angka acak (`generator.ts`), dan urutan pilihan jawaban diacak di setiap sesi. Isi materi ada di `materi.ts`; setiap fakta harus punya sumber resmi yang dicantumkan di bab tersebut. Soal-soalnya buatan sendiri untuk latihan pola, bukan soal resmi. `id` setiap soal, istilah, dan pertanyaan dipakai sebagai kunci di database, jadi jangan diganti setelah aplikasi dipakai.
 
 ## Cara kerja data
 

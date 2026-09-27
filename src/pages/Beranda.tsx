@@ -1,4 +1,5 @@
-import { ArrowRight, Flame, Layers, Target } from 'lucide-react';
+import { ArrowRight, BookOpen, BookOpenCheck, CalendarDays, Flame, History, Layers, MessageSquareText, Target } from 'lucide-react';
+import { MATERI } from '../data/materi';
 import { MODUL, FASE, namaModul } from '../data/modul';
 import { SOAL } from '../data/soal';
 import { ISTILAH } from '../data/istilah';
@@ -27,12 +28,17 @@ export function Beranda() {
   const terakhir = [...percobaan].sort(byMulaiDesc).slice(0, 5);
   const lemah = topikLemah(status).filter((t) => t.persen < 80).slice(0, 4);
   const beruntun = streak(percobaan, tugas);
+  const dibaca = (p.preferensi.materi_dibaca as string[] | undefined) ?? [];
+  const babBerikut = MATERI.find((b) => !dibaca.includes(b.id));
+  const sapaan = new Date().getHours() < 11 ? 'Selamat pagi' : new Date().getHours() < 15 ? 'Selamat siang' : new Date().getHours() < 19 ? 'Selamat sore' : 'Selamat malam';
 
   return (
     <div className="page">
       <section className="hero card">
         <div>
-          <p className="eyebrow">{tanggalPanjang(hariIni)}</p>
+          <p className="eyebrow">
+            {sapaan}! · {tanggalPanjang(hariIni)}
+          </p>
           <h1 className="hero-title">
             {sisa > 0 ? <>H-{sisa}</> : sisa === 0 ? 'Hari ini tesnya!' : 'Target sudah lewat'}
           </h1>
@@ -60,6 +66,29 @@ export function Beranda() {
           </a>
         </div>
       </section>
+
+      <nav className="tiles" aria-label="Menu belajar">
+        {TILES.map((t) => (
+          <a key={t.href} className="tile" href={t.href}>
+            <span className={`tile-icon ${t.warna}`}>
+              <t.icon size={24} />
+            </span>
+            {t.nama}
+          </a>
+        ))}
+      </nav>
+
+      <a className="card continue" href={babBerikut ? `#/materi/${babBerikut.id}` : `#/latihan`}>
+        <span className="tile-icon c-green" aria-hidden>
+          {babBerikut ? <BookOpen size={26} /> : <BookOpenCheck size={26} />}
+        </span>
+        <span className="grow">
+          <small className="muted block">{babBerikut ? `Lanjut belajar · ${dibaca.length}/${MATERI.length} bab dibaca` : 'Semua bab sudah dibaca'}</small>
+          <b>{babBerikut ? babBerikut.judul : 'Asah terus lewat latihan campuran'}</b>
+          <small className="muted block">{babBerikut ? `${babBerikut.menit} menit baca, lalu latihan soal ${babBerikut.topik}` : 'Soal hitungan selalu baru dan opsi jawaban diacak.'}</small>
+        </span>
+        <ArrowRight size={20} />
+      </a>
 
       <div className="grid-2">
         <section className="card">
@@ -179,3 +208,13 @@ export function Beranda() {
     </div>
   );
 }
+
+const TILES = [
+  { href: '#/materi', nama: 'Materi', icon: BookOpen, warna: 'c-green' },
+  { href: '#/latihan', nama: 'Latihan', icon: BookOpenCheck, warna: 'c-blue' },
+  { href: '#/flashcard', nama: 'Flashcard', icon: Layers, warna: 'c-orange' },
+  { href: '#/jadwal', nama: 'Jadwal', icon: CalendarDays, warna: 'c-purple' },
+  { href: '#/wawancara', nama: 'Wawancara', icon: MessageSquareText, warna: 'c-pink' },
+  { href: '#/riwayat', nama: 'Riwayat', icon: History, warna: 'c-teal' },
+];
+
