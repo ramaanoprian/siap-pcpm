@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ArrowLeft, Check, RotateCcw, Trash2, X } from 'lucide-react';
 import { MODUL, namaModul } from '../data/modul';
-import { soalById } from '../data/soal';
+import { cariSoal } from '../data/generator';
 import { useRows, useStore } from '../lib/sync';
 import { byMulaiDesc, type JawabanItem, type PerTopik } from '../lib/stats';
 import { Bar, Empty, PageHead, toneSkor } from '../components';
@@ -156,7 +156,7 @@ function Detail({ id }: { id: string }) {
       </div>
       <ol className="review">
         {tampil.map((j) => {
-          const s = soalById.get(j.soal_id);
+          const s = cariSoal(j.soal_id);
           if (!s) return null;
           return (
             <li key={j.soal_id} className="card">

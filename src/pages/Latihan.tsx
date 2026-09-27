@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { ArrowLeft, ArrowRight, Bookmark, BookmarkCheck, Check, Clock, X } from 'lucide-react';
+import { ArrowLeft, ArrowRight, BookOpen, Bookmark, BookmarkCheck, Check, Clock, Shuffle, X } from 'lucide-react';
 import { MODUL, modulById, namaModul, type ModulPercobaan } from '../data/modul';
 import { SOAL, type Soal } from '../data/soal';
-import { newId, useRows, useStore, type StatusSoal } from '../lib/sync';
+import { isGenerated, JUMLAH_POLA, soalAcak } from '../data/generator';
+import { babById, MATERI } from '../data/materi';
+import { newId, usePengaturan, useRows, useStore, type StatusSoal } from '../lib/sync';
 import type { JawabanItem, PerTopik } from '../lib/stats';
 import type { Json } from '../lib/database.types';
 import { Bar, Empty, PageHead } from '../components';
@@ -11,12 +13,15 @@ import { cx, go, jamMenit, shuffle } from '../util';
 type Mode = 'latihan' | 'simulasi';
 type Sumber = 'semua' | 'belum' | 'salah' | 'ditandai';
 
+/** Soal yang tampil di sesi: opsinya bisa diacak, `urutan[k]` = indeks opsi asli untuk opsi ke-k. */
+type SoalSesi = Soal & { urutan: number[] };
+
 interface Sesi {
   id: string;
   modul: ModulPercobaan;
   mode: Mode;
   paket: string;
-  soal: Soal[];
+  soal: SoalSesi[];
   mulai: string;
   batasDetik: number | null;
 }
@@ -28,36 +33,61 @@ const SUMBER: { id: Sumber; nama: string }[] = [
   { id: 'ditandai', nama: 'Ditandai' },
 ];
 
-function pilihSoal(modul: ModulPercobaan, sumber: Sumber, status: Map<string, StatusSoal>): Soal[] {
+function pilihSoal(modul: ModulPercobaan, sumber: Sumber, status: Map<string, StatusSoal>, topik: string[] | null): Soal[] {
   let list = modul === 'campuran' ? SOAL : SOAL.filter((s) => s.modul === modul);
+  if (topik) list = list.filter((s) => topik.includes(s.topik));
   if (sumber === 'belum') list = list.filter((s) => !status.get(s.id)?.terakhir_dikerjakan);
   if (sumber === 'salah') list = list.filter((s) => status.get(s.id)?.terakhir_benar === false);
   if (sumber === 'ditandai') list = list.filter((s) => status.get(s.id)?.ditandai);
   return list;
 }
 
-/** Soal bacaan dijaga tetap berurutan dan bersama; sisanya diacak. */
-function susun(list: Soal[], jumlah: number): Soal[] {
-  const acak = shuffle(list).slice(0, jumlah);
-  return acak.sort((a, b) => (a.bacaan && b.bacaan ? a.id.localeCompare(b.id) : 0));
+/** Opsi penutup seperti "Tidak dapat disimpulkan" tetap di akhir; soal cari-kesalahan (A: …) tidak diacak. */
+const OPSI_PENUTUP = /^(tidak dapat disimpulkan|tidak ada kesalahan|semua (jawaban )?benar)$/i;
+
+function acakOpsi(s: Soal): SoalSesi {
+  const asli = s.opsi.map((_, k) => k);
+  if (isGenerated(s.id) || s.opsi.some((o) => /^[A-E]: /.test(o))) return { ...s, urutan: asli };
+  const tetap = asli.filter((k) => OPSI_PENUTUP.test(s.opsi[k]));
+  const urutan = [...shuffle(asli.filter((k) => !tetap.includes(k))), ...tetap];
+  return { ...s, opsi: urutan.map((k) => s.opsi[k]), kunci: urutan.indexOf(s.kunci), urutan };
 }
 
-export function Latihan() {
+/** Soal bacaan dijaga tetap berurutan dan bersama; sisanya diacak, begitu juga urutan opsinya. */
+function susun(list: Soal[], jumlah: number): SoalSesi[] {
+  const acak = shuffle(list).slice(0, jumlah);
+  return acak.sort((a, b) => (a.bacaan && b.bacaan ? a.id.localeCompare(b.id) : 0)).map(acakOpsi);
+}
+
+/** Soal hitungan baru ikut dicampur bila modulnya memuat Potensi Dasar. */
+const pakaiGenerator = (modul: ModulPercobaan, sumber: Sumber, topik: string[] | null) =>
+  (modul === 'potensi-dasar' || modul === 'campuran') && (sumber === 'semua' || sumber === 'belum') && (!topik || topik.includes('Numerik'));
+
+/** `awal` dari URL: id modul (`#/latihan/english`) atau bab materi (`#/latihan/bab-moneter`). */
+export function Latihan({ awal }: { awal?: string }) {
   const [sesi, setSesi] = useState<Sesi | null>(null);
   if (sesi) return <Kuis sesi={sesi} onSelesai={(id) => go('riwayat', id)} onBatal={() => setSesi(null)} />;
-  return <Pengaturan onMulai={setSesi} />;
+  return <Pengaturan key={awal} awal={awal} onMulai={setSesi} />;
 }
 
-function Pengaturan({ onMulai }: { onMulai: (s: Sesi) => void }) {
+function Pengaturan({ awal, onMulai }: { awal?: string; onMulai: (s: Sesi) => void }) {
   const statusRows = useRows('status_soal');
   const status = useMemo(() => new Map(statusRows.map((s) => [s.soal_id, s])), [statusRows]);
-  const [modul, setModul] = useState<ModulPercobaan>('campuran');
+  const [p] = usePengaturan();
+  const dibaca = (p.preferensi.materi_dibaca as string[] | undefined) ?? [];
+  const babAwal = awal?.startsWith('bab-') ? babById(awal.slice(4)) : undefined;
+  const [bab, setBab] = useState(babAwal);
+  const topik = bab ? [bab.topik] : null;
+  const [modul, setModul] = useState<ModulPercobaan>(babAwal?.modul ?? (MODUL.some((m) => m.id === awal) ? (awal as ModulPercobaan) : 'campuran'));
   const [mode, setMode] = useState<Mode>('latihan');
   const [sumber, setSumber] = useState<Sumber>('semua');
   const [jumlah, setJumlah] = useState(10);
 
-  const tersedia = pilihSoal(modul, sumber, status);
+  const tetap = pilihSoal(modul, sumber, status, topik);
+  const generator = pakaiGenerator(modul, sumber, topik);
+  const tersedia = generator ? [...tetap, ...soalAcak(Math.max(jumlah, 20))] : tetap;
   const n = Math.min(jumlah, tersedia.length);
+  const belumBaca = MATERI.filter((b) => (modul === 'campuran' || b.modul === modul) && !dibaca.includes(b.id));
   const menitPerSoal = modul === 'campuran' ? 1 : modulById(modul)!.menitPerSoal;
 
   const mulai = () => {
@@ -77,6 +107,32 @@ function Pengaturan({ onMulai }: { onMulai: (s: Sesi) => void }) {
     <div className="page">
       <PageHead title="Latihan" sub="Pilih modul dan mode, lalu mulai. Hasilnya tersimpan di Riwayat." />
 
+      {bab && (
+        <div className="filter-bar">
+          <span className="chip on">
+            <BookOpen size={16} /> Bab: {bab.judul}
+          </span>
+          <button type="button" className="link-btn" onClick={() => setBab(undefined)}>
+            Latihan semua topik
+          </button>
+        </div>
+      )}
+
+      {!bab && belumBaca.length > 0 && (
+        <a className="card nudge" href={`#/materi/${belumBaca[0].id}`}>
+          <span className="nudge-icon" aria-hidden>
+            <BookOpen size={20} />
+          </span>
+          <span className="grow">
+            <b>Baca materinya dulu</b>
+            <small className="block muted">
+              {belumBaca.length} bab {namaModul(belumBaca[0].modul)} belum dibaca. Mulai dari "{belumBaca[0].judul}".
+            </small>
+          </span>
+          <ArrowRight size={18} />
+        </a>
+      )}
+
       <section className="card">
         <h2 className="label">Modul</h2>
         <div className="choice-grid">
@@ -84,12 +140,16 @@ function Pengaturan({ onMulai }: { onMulai: (s: Sesi) => void }) {
             const total = m.id === 'campuran' ? SOAL.length : SOAL.filter((s) => s.modul === m.id).length;
             const selesai = (m.id === 'campuran' ? SOAL : SOAL.filter((s) => s.modul === m.id)).filter((s) => status.get(s.id)?.terakhir_benar).length;
             return (
-              <button key={m.id} type="button" className={cx('choice', modul === m.id && 'on')} onClick={() => setModul(m.id)} aria-pressed={modul === m.id}>
+              <button key={m.id} type="button" className={cx('choice', modul === m.id && 'on')} onClick={() => {
+                  setModul(m.id);
+                  if (bab && bab.modul !== m.id) setBab(undefined);
+                }} aria-pressed={modul === m.id}>
                 <b>{m.nama}</b>
                 <small>{m.deskripsi}</small>
                 <Bar value={(selesai / total) * 100} tone="ok" />
                 <small className="muted">
                   {selesai}/{total} dikuasai
+                  {(m.id === 'potensi-dasar' || m.id === 'campuran') && ' · + soal hitungan acak'}
                 </small>
               </button>
             );
@@ -133,6 +193,12 @@ function Pengaturan({ onMulai }: { onMulai: (s: Sesi) => void }) {
           </div>
         </div>
 
+        {generator && (
+          <p className="muted small row">
+            <Shuffle size={14} /> Termasuk soal hitungan baru dari {JUMLAH_POLA} pola dengan angka acak, jadi tidak ada yang sama persis. Urutan pilihan jawaban juga diacak.
+          </p>
+        )}
+
         {tersedia.length ? (
           <button className="btn primary big" onClick={mulai}>
             Mulai {n} soal{mode === 'simulasi' ? ` · ${Math.round(n * menitPerSoal)} menit` : ''} <ArrowRight size={16} />
@@ -162,7 +228,12 @@ function Kuis({ sesi, onSelesai, onBatal }: { sesi: Sesi; onSelesai: (id: string
     if (selesaiRef.current) return;
     selesaiRef.current = true;
     const now = new Date().toISOString();
-    const jawaban: JawabanItem[] = sesi.soal.map((s, k) => ({ soal_id: s.id, pilih: pilih[k], benar: pilih[k] === s.kunci }));
+    // Pilihan dikembalikan ke indeks opsi asli agar Riwayat cocok dengan bank soal.
+    const jawaban: JawabanItem[] = sesi.soal.map((s, k) => ({
+      soal_id: s.id,
+      pilih: pilih[k] == null ? null : s.urutan[pilih[k]!],
+      benar: pilih[k] === s.kunci,
+    }));
     const per: PerTopik = {};
     sesi.soal.forEach((s, k) => {
       const t = (per[s.topik] ??= { benar: 0, total: 0 });
@@ -185,7 +256,7 @@ function Kuis({ sesi, onSelesai, onBatal }: { sesi: Sesi; onSelesai: (id: string
     });
     // Status per soal hanya diperbarui untuk soal yang dijawab.
     sesi.soal.forEach((s, k) => {
-      if (pilih[k] == null) return;
+      if (pilih[k] == null || isGenerated(s.id)) return;
       const prev = status.get(s.id);
       const ok = jawaban[k].benar;
       store.put('status_soal', {
@@ -267,9 +338,15 @@ function Kuis({ sesi, onSelesai, onBatal }: { sesi: Sesi; onSelesai: (id: string
       <section className="card question">
         <div className="row-between">
           <span className="tag">{soal.topik}</span>
-          <button type="button" className={cx('icon-btn', ditandai && 'on')} onClick={tandai} aria-pressed={!!ditandai} title="Tandai untuk diulang">
-            {ditandai ? <BookmarkCheck size={18} /> : <Bookmark size={18} />}
-          </button>
+          {isGenerated(soal.id) ? (
+            <span className="tag tonal">
+              <Shuffle size={12} /> Soal acak
+            </span>
+          ) : (
+            <button type="button" className={cx('icon-btn', ditandai && 'on')} onClick={tandai} aria-pressed={!!ditandai} title="Tandai untuk diulang">
+              {ditandai ? <BookmarkCheck size={18} /> : <Bookmark size={18} />}
+            </button>
+          )}
         </div>
         {soal.bacaan && (
           <details className="bacaan" open>

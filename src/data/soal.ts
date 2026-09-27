@@ -1,4 +1,5 @@
 import type { ModulId } from './modul';
+import { SOAL_MATERI } from './soal-materi';
 
 export interface Soal {
   /** Tetap dan unik; dipakai sebagai kunci status_soal.soal_id. Jangan diganti setelah dipakai. */
@@ -497,6 +498,9 @@ export const SOAL: Soal[] = [
     ], kunci: 1,
     bahas: 'Paragraf terakhir: bila publik percaya komitmen bank sentral, ekspektasi inflasi tetap stabil dan pengendalian harga menjadi lebih mudah.',
   },
+
+  // ---------------- Kebanksentralan dari bab Materi ----------------
+  ...SOAL_MATERI,
 ];
 
 export const soalById = new Map(SOAL.map((s) => [s.id, s]));

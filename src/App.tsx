@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import type { Session } from '@supabase/supabase-js';
 import {
+  BookOpen,
   BookOpenCheck,
   Brain,
   CalendarDays,
@@ -18,6 +19,7 @@ import { LoginPage, NewPasswordPage } from './Login';
 import { SyncBadge } from './components';
 import { Beranda } from './pages/Beranda';
 import { Latihan } from './pages/Latihan';
+import { Materi } from './pages/Materi';
 import { Riwayat } from './pages/Riwayat';
 import { Flashcard } from './pages/Flashcard';
 import { Psikologi } from './pages/Psikologi';
@@ -31,19 +33,21 @@ interface NavItem {
   id: Route;
   nama: string;
   icon: LucideIcon;
+  warna: string;
 }
 
 const NAV: NavItem[] = [
-  { id: 'beranda', nama: 'Beranda', icon: House },
-  { id: 'latihan', nama: 'Latihan', icon: BookOpenCheck },
-  { id: 'flashcard', nama: 'Flashcard', icon: Layers },
-  { id: 'jadwal', nama: 'Jadwal', icon: CalendarDays },
-  { id: 'riwayat', nama: 'Riwayat', icon: History },
-  { id: 'wawancara', nama: 'Wawancara', icon: MessageSquareText },
-  { id: 'psikologi', nama: 'Psikologi', icon: Brain },
-  { id: 'pengaturan', nama: 'Pengaturan', icon: Settings },
+  { id: 'beranda', nama: 'Beranda', icon: House, warna: 'c-blue' },
+  { id: 'materi', nama: 'Materi', icon: BookOpen, warna: 'c-green' },
+  { id: 'latihan', nama: 'Latihan', icon: BookOpenCheck, warna: 'c-blue' },
+  { id: 'flashcard', nama: 'Flashcard', icon: Layers, warna: 'c-orange' },
+  { id: 'jadwal', nama: 'Jadwal', icon: CalendarDays, warna: 'c-purple' },
+  { id: 'riwayat', nama: 'Riwayat', icon: History, warna: 'c-teal' },
+  { id: 'wawancara', nama: 'Wawancara', icon: MessageSquareText, warna: 'c-pink' },
+  { id: 'psikologi', nama: 'Psikologi', icon: Brain, warna: 'c-purple' },
+  { id: 'pengaturan', nama: 'Pengaturan', icon: Settings, warna: 'c-teal' },
 ];
-const TAB_UTAMA: Route[] = ['beranda', 'latihan', 'flashcard', 'jadwal'];
+const TAB_UTAMA: Route[] = ['beranda', 'materi', 'latihan', 'jadwal'];
 
 function readRoute(): { route: Route; param?: string } {
   const [r, param] = location.hash.replace(/^#\/?/, '').split('/');
@@ -124,7 +128,7 @@ function useTheme() {
     const apply = () => {
       const dark = tema === 'gelap' || (tema === 'auto' && matchMedia('(prefers-color-scheme: dark)').matches);
       root.dataset.theme = dark ? 'dark' : 'light';
-      document.querySelector('meta[name=theme-color]')?.setAttribute('content', dark ? '#000000' : '#f5f5f7');
+      document.querySelector('meta[name=theme-color]')?.setAttribute('content', dark ? '#111318' : '#f8f9ff');
     };
     apply();
     const mq = matchMedia('(prefers-color-scheme: dark)');
@@ -139,7 +143,8 @@ function Shell({ email }: { email: string }) {
 
   let page: ReactNode;
   switch (route) {
-    case 'latihan': page = <Latihan />; break;
+    case 'materi': page = <Materi id={param} />; break;
+    case 'latihan': page = <Latihan awal={param} />; break;
     case 'riwayat': page = <Riwayat id={param} />; break;
     case 'flashcard': page = <Flashcard />; break;
     case 'psikologi': page = <Psikologi />; break;
@@ -165,7 +170,7 @@ function Shell({ email }: { email: string }) {
         <nav>
           {NAV.map((n) => (
             <a key={n.id} href={`#/${n.id}`} className={cx('side-link', route === n.id && 'on')} aria-current={route === n.id ? 'page' : undefined}>
-              <n.icon size={18} strokeWidth={1.9} />
+              <n.icon size={20} strokeWidth={1.9} />
               {n.nama}
             </a>
           ))}
@@ -176,9 +181,9 @@ function Shell({ email }: { email: string }) {
       <main className="main">{page}</main>
 
       <nav className="tabbar" aria-label="Menu utama">
-        {[...NAV.filter((n) => TAB_UTAMA.includes(n.id)), { id: 'lainnya' as Route, nama: 'Lainnya', icon: LayoutGrid }].map((n) => (
+        {[...NAV.filter((n) => TAB_UTAMA.includes(n.id)), { id: 'lainnya' as Route, nama: 'Lainnya', icon: LayoutGrid, warna: '' }].map((n) => (
           <a key={n.id} href={`#/${n.id}`} className={cx('tab', aktif(n.id) && 'on')} aria-current={aktif(n.id) ? 'page' : undefined}>
-            <n.icon size={22} strokeWidth={1.8} />
+            <n.icon size={24} strokeWidth={aktif(n.id) ? 2.2 : 1.8} />
             <span>{n.nama}</span>
           </a>
         ))}
@@ -196,7 +201,9 @@ function Lainnya() {
       <div className="menu-grid">
         {NAV.filter((n) => !TAB_UTAMA.includes(n.id)).map((n) => (
           <a key={n.id} href={`#/${n.id}`} className="card menu-tile">
-            <n.icon size={22} strokeWidth={1.8} />
+            <span className={`tile-icon ${n.warna}`}>
+              <n.icon size={24} strokeWidth={1.8} />
+            </span>
             <b>{n.nama}</b>
           </a>
         ))}
