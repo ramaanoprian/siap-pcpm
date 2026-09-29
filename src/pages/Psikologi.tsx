@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { ArrowLeft, ArrowRight, Trash2 } from 'lucide-react';
 import { BUTIR, DIMENSI, SKALA, nilaiPsikologi } from '../data/psikologi';
 import { newId, useRows, useStore, type PsikologiHasil } from '../lib/sync';
@@ -58,12 +58,30 @@ function Isi({ onSelesai, onBatal }: { onSelesai: (id: string) => void; onBatal:
   const urutan = useMemo(() => shuffle(BUTIR), []);
   const [jawaban, setJawaban] = useState<Record<string, number>>({});
   const [i, setI] = useState(0);
-  const b = urutan[i];
-  const lengkap = Object.keys(jawaban).length === urutan.length;
+  const terakhir = urutan.length - 1;
+  const b = urutan[Math.min(i, terakhir)];
+  const belum = urutan.findIndex((x) => !jawaban[x.id]);
+  const sisa = urutan.filter((x) => !jawaban[x.id]).length;
+  const lengkap = sisa === 0;
+  const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  useEffect(() => () => clearTimeout(timer.current), []);
+
+  const pindah = (ke: number) => {
+    clearTimeout(timer.current);
+    setI(Math.max(0, Math.min(ke, terakhir)));
+  };
 
   const pilih = (v: number) => {
-    setJawaban((j) => ({ ...j, [b.id]: v }));
-    if (i < urutan.length - 1) setTimeout(() => setI((x) => x + 1), 150);
+    const baru = { ...jawaban, [b.id]: v };
+    setJawaban(baru);
+    // Satu timer saja, dan hanya maju dari pernyataan yang baru dijawab, ke pernyataan
+    // berikutnya yang belum dijawab (atau ke akhir kalau semua sudah terisi). Ketukan
+    // cepat tidak boleh melompati pernyataan atau melewati akhir daftar.
+    clearTimeout(timer.current);
+    const dari = i;
+    const lanjut = urutan.findIndex((x, k) => k > dari && !baru[x.id]);
+    const ke = lanjut >= 0 ? lanjut : urutan.some((x) => !baru[x.id]) ? urutan.findIndex((x) => !baru[x.id]) : terakhir;
+    if (ke !== dari) timer.current = setTimeout(() => setI((x) => (x === dari ? ke : x)), 150);
   };
 
   const simpan = () => {
@@ -100,16 +118,20 @@ function Isi({ onSelesai, onBatal }: { onSelesai: (id: string) => void; onBatal:
         </div>
       </section>
       <div className="quiz-nav">
-        <button className="btn" disabled={i === 0} onClick={() => setI(i - 1)}>
+        <button className="btn" disabled={i === 0} onClick={() => pindah(i - 1)}>
           <ArrowLeft size={16} /> Sebelumnya
         </button>
-        {i < urutan.length - 1 ? (
-          <button className="btn" onClick={() => setI(i + 1)} disabled={!jawaban[b.id]}>
+        {i < terakhir ? (
+          <button className="btn" onClick={() => pindah(i + 1)} disabled={!jawaban[b.id]}>
             Berikutnya <ArrowRight size={16} />
           </button>
-        ) : (
-          <button className="btn primary" disabled={!lengkap} onClick={simpan}>
+        ) : lengkap ? (
+          <button className="btn primary" onClick={simpan}>
             Lihat hasil
+          </button>
+        ) : (
+          <button className="btn primary" onClick={() => pindah(belum)} disabled={!jawaban[b.id]}>
+            Jawab {sisa} yang terlewat <ArrowRight size={16} />
           </button>
         )}
       </div>
