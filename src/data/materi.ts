@@ -65,6 +65,14 @@ const MATERI_BI: Bab[] = [
           'Pasal 37: Dewan Gubernur terdiri atas seorang Gubernur, seorang Deputi Gubernur Senior, dan sekurang-kurangnya 4 atau sebanyak-banyaknya 7 Deputi Gubernur.',
           'Dewan Gubernur dipimpin Gubernur, dengan Deputi Gubernur Senior sebagai wakil.',
           'Pasal 43: Rapat Dewan Gubernur (RDG) diadakan sekurang-kurangnya sekali sebulan untuk menetapkan kebijakan umum moneter, dan sekurang-kurangnya sekali seminggu untuk evaluasi pelaksanaan kebijakan. Jadwal RDG bulanan diumumkan BI setiap tahun.',
+          'Pada 2 September 2026 dilantik Destry Damayanti sebagai Gubernur, Aida S. Budiman sebagai Deputi Gubernur Senior, dan Solikin M. Juhro sebagai Deputi Gubernur, berdasarkan Keppres No. 92/P Tahun 2026. Masa jabatannya lima tahun.',
+        ],
+      },
+      {
+        judul: 'Pelindungan konsumen BI',
+        isi: [
+          'PBI No. 6 Tahun 2026 tentang Pelindungan Konsumen Bank Indonesia berlaku sejak diundangkan 6 Juni 2026 dan mencabut PBI No. 3 Tahun 2023. Latar belakangnya ekonomi digital yang menambah risiko bagi konsumen, seperti ketimpangan informasi, praktik usaha yang tidak transparan, dan penyalahgunaan data.',
+          'PBI ini memuat tujuh prinsip pelindungan konsumen: edukasi, transparansi, perlakuan adil, pelindungan aset dan data, penanganan pengaduan, kepatuhan, serta persaingan usaha yang sehat.',
         ],
       },
       {
@@ -81,9 +89,17 @@ const MATERI_BI: Bab[] = [
       'Pengawasan bank pindah ke OJK pada 31 Desember 2013.',
       'Dewan Gubernur: 1 Gubernur, 1 DGS, 4–7 Deputi Gubernur.',
       'Prinsip tata kelola: IKKAT.',
+      'Gubernur BI sejak 2 September 2026: Destry Damayanti (Keppres 92/P/2026).',
+      'Pelindungan konsumen BI: PBI 6/2026, mencabut PBI 3/2023.',
     ],
     video: [yt('BI Menjawab: Kupas Tuntas Peran Bank Sentral di Indonesia', '_HSH5ilP97o', 'YouTube'), yt('Bank Indonesia: Independensi dan Kepercayaan', 'T3GCWczs42E', 'YouTube'), BI_CHANNEL],
-    sumber: [UU_BI, UU_BI_BPK, BI_GOVERNANCE],
+    sumber: [
+      UU_BI,
+      UU_BI_BPK,
+      BI_GOVERNANCE,
+      { nama: 'Bank Indonesia: Pelantikan Anggota Dewan Gubernur (2 September 2026)', url: 'https://www.bi.go.id/id/publikasi/ruang-media/news-release/Pages/sp_2817826.aspx' },
+      { nama: 'Bank Indonesia: PBI No. 6 Tahun 2026 tentang Pelindungan Konsumen BI', url: 'https://www.bi.go.id/id/publikasi/peraturan/Pages/PBI_062026.aspx' },
+    ],
   },
   {
     id: 'moneter',
@@ -116,7 +132,7 @@ const MATERI_BI: Bab[] = [
       {
         judul: 'Sasaran inflasi',
         isi: [
-          'Sasaran inflasi ditetapkan Pemerintah berkoordinasi dengan BI. Untuk 2024, 2025, dan 2026 sasarannya 2,5±1%. Realisasi inflasi terbaru bisa dicek di halaman statistik BI.',
+          'Sasaran inflasi ditetapkan Pemerintah berkoordinasi dengan BI melalui Peraturan Menteri Keuangan. PMK No. 31 Tahun 2024 (ditetapkan 16 Mei 2024) menetapkan sasaran 2025, 2026, dan 2027 masing-masing 2,5% dengan deviasi 1% (2,5±1%). Sasaran 2024 juga 2,5±1%. Realisasi inflasi terbaru bisa dicek di halaman statistik BI.',
         ],
       },
       {
@@ -145,12 +161,21 @@ const MATERI_BI: Bab[] = [
           'Berdasarkan Perpres No. 23 Tahun 2017, BI dan Pemerintah bekerja sama dalam Tim Pengendalian Inflasi di pusat (TPIP) dan daerah (TPID). Strateginya dikenal sebagai 4K: Keterjangkauan harga, Ketersediaan pasokan, Kelancaran distribusi, dan Komunikasi yang efektif.',
         ],
       },
+      {
+        judul: 'Devisa Hasil Ekspor (DHE) SDA',
+        poin: [
+          'PBI No. 5 Tahun 2026 (berlaku 1 Juni 2026) adalah perubahan kedua atas PBI No. 7 Tahun 2023 tentang Devisa Hasil Ekspor dan Devisa Pembayaran Impor, menyesuaikan penataan ulang ekosistem DHE sumber daya alam oleh Pemerintah.',
+          'Pemasukan dan penempatan DHE SDA kini hanya boleh dilakukan di Bank BUMN.',
+          'Instrumen penempatan DHE SDA ditambah dengan SUN dan SBSN dalam valuta asing.',
+        ],
+      },
     ],
     ingat: [
       'ITF sejak 2005, lalu Flexible ITF pasca krisis 2008/2009.',
       'BI-Rate = reverse repo 7 hari. Nama BI7DRR (19 Agustus 2016) diganti BI-Rate (21 Desember 2023).',
       'Sasaran operasional: IndONIA.',
-      'Sasaran inflasi 2024–2026: 2,5±1%.',
+      'Sasaran inflasi 2024–2027: 2,5±1% (2025–2027 lewat PMK 31/2024).',
+      'DHE SDA wajib ditempatkan di Bank BUMN (PBI 5/2026, berlaku 1 Juni 2026).',
       'Strategi 4K TPIP/TPID.',
     ],
     video: [yt('Mengenal Kebijakan Moneter Bank Indonesia', 'KMPnVroI2vE', 'Bank Indonesia Channel'), yt('[Bank Indonesia 101] Inflasi', '19l6NalTE4c', 'Bank Indonesia Channel'), cariYt('Bank Indonesia mekanisme transmisi kebijakan moneter')],
@@ -158,6 +183,8 @@ const MATERI_BI: Bab[] = [
       { nama: 'Bank Indonesia: Kebijakan Moneter', url: 'https://www.bi.go.id/id/fungsi-utama/moneter/default.aspx' },
       { nama: 'Bank Indonesia: BI-Rate', url: 'https://www.bi.go.id/id/fungsi-utama/moneter/bi-rate/default.aspx' },
       { nama: 'Bank Indonesia: Target Inflasi', url: 'https://www.bi.go.id/id/statistik/indikator/target-inflasi.aspx' },
+      { nama: 'JDIH Kemenkeu: PMK No. 31 Tahun 2024 tentang Sasaran Inflasi 2025–2027', url: 'https://jdih.kemenkeu.go.id/dok/pmk-31-tahun-2024/summary' },
+      { nama: 'Bank Indonesia: PBI No. 5 Tahun 2026 tentang Devisa Hasil Ekspor dan Devisa Pembayaran Impor', url: 'https://www.bi.go.id/id/publikasi/peraturan/Pages/PBI_052026.aspx' },
       {
         nama: 'BI Institute: Mekanisme Transmisi Kebijakan Moneter di Indonesia',
         url: 'https://www.bi.go.id/id/bi-institute/policy-mix/core/Documents/Mekanisme_transmisi_kebijakan_moneter_di_Indonesia.pdf',
@@ -262,7 +289,7 @@ const MATERI_BI: Bab[] = [
           'QRIS (Quick Response Code Indonesian Standard) adalah standar QR nasional agar pembayaran lintas penyelenggara bisa memakai satu kode.',
           'Diluncurkan 17 Agustus 2019 dan berlaku wajib secara nasional mulai 1 Januari 2020.',
           'MDR untuk usaha mikro (UMI): 0% untuk transaksi sampai Rp500.000 dan 0,3% untuk di atasnya.',
-          'QRIS antarnegara sudah tersambung antara lain dengan Thailand, Malaysia, dan Singapura, dengan mengutamakan mata uang lokal.',
+          'QRIS antarnegara sudah tersambung dengan Thailand (sejak Agustus 2022), Malaysia (Mei 2023), Singapura (November 2023), Jepang (Agustus 2025), dan Korea Selatan (diresmikan 1 April 2026 bersama Bank of Korea), dengan mengutamakan mata uang lokal.',
           'QRIS TUNTAS: layanan Tarik tunai, Transfer, dan Setor tunai dengan memindai QRIS.',
         ],
       },
@@ -270,6 +297,15 @@ const MATERI_BI: Bab[] = [
         judul: 'Blueprint Sistem Pembayaran Indonesia (BSPI) 2030',
         isi: [
           'BSPI 2030 melanjutkan BSPI 2025 untuk mempercepat ekonomi digital nasional. Isinya lima inisiatif: Infrastruktur, Industri (konsolidasi), Inovasi, Internasional, dan Rupiah Digital. Implementasinya bertahap dari 2025 sampai 2030.',
+          'BSPI 2030 menargetkan volume transaksi pembayaran digital 147,3 miliar transaksi pada 2030, didukung perluasan QRIS, BI-FAST, dan SNAP (Standar Nasional Open API Pembayaran).',
+        ],
+      },
+      {
+        judul: 'Pengaturan Industri Sistem Pembayaran (PBI PISP)',
+        poin: [
+          'PBI No. 10 Tahun 2025 tentang Pengaturan Industri Sistem Pembayaran, bersama PADG No. 32 Tahun 2025, berlaku efektif 31 Maret 2026 sebagai implementasi inisiatif Industri dalam BSPI 2030.',
+          'Kinerja penyelenggara dinilai dengan kerangka TIKMI: Transaksi, Interkoneksi, Kompetensi, Manajemen risiko, dan Infrastruktur teknologi informasi.',
+          'Hasil penilaian dipakai untuk mengklasifikasikan Penyelenggara Jasa Sistem Pembayaran (PJSP) menjadi PSP Utama atau selain Utama. Aktivitas Penyedia Jasa Pembayaran (PJP) dikelompokkan dalam tiga paket (bundling); paket tertinggi 1A khusus PSP Utama.',
         ],
       },
     ],
@@ -278,6 +314,8 @@ const MATERI_BI: Bab[] = [
       'BI-FAST: Desember 2021, 24/7, maks Rp2.500 ke nasabah.',
       'QRIS: diluncurkan 17 Agustus 2019; MDR UMI 0% sampai Rp500 ribu.',
       'BSPI 2030: Infrastruktur, Industri, Inovasi, Internasional, Rupiah Digital.',
+      'QRIS antarnegara: Thailand, Malaysia, Singapura, Jepang, Korea Selatan (2026).',
+      'PBI PISP (PBI 10/2025): kerangka TIKMI, berlaku 31 Maret 2026.',
     ],
     video: [yt('[Bank Indonesia 101] QRIS: Satu QR, Semua Bisa Bayar', '-DshsgueEU0', 'Bank Indonesia 101'), yt('Bank Indonesia 101: Uang Elektronik', 'aLVZEmvxfk8', 'Bank Indonesia 101'), yt('[Bank Indonesia 101] Alat Pembayaran Menggunakan Kartu (APMK)', '2SI3lKCGVbc', 'Bank Indonesia 101'), cariYt('BI-FAST Bank Indonesia')],
     sumber: [
@@ -285,6 +323,9 @@ const MATERI_BI: Bab[] = [
       { nama: 'Bank Indonesia: FAQ BI-FAST', url: 'https://www.bi.go.id/id/publikasi/ruang-media/news-release/Documents/FAQ_SP_2327021.pdf' },
       { nama: 'Bank Indonesia: QRIS', url: 'https://www.bi.go.id/en/fungsi-utama/sistem-pembayaran/ritel/kanal-layanan/QRIS/default.aspx' },
       { nama: 'Bank Indonesia: Blueprint Sistem Pembayaran Indonesia 2030', url: 'https://www.bi.go.id/id/publikasi/kajian/Pages/Blueprint-Sistem-Pembayaran-Indonesia-2030.aspx' },
+      { nama: 'Bank Indonesia: PBI No. 10 Tahun 2025 tentang Pengaturan Industri Sistem Pembayaran', url: 'https://www.bi.go.id/id/publikasi/peraturan/Pages/PBI_102025.aspx' },
+      { nama: 'Bank Indonesia: BI Perkuat Struktur Industri Sistem Pembayaran (22 Januari 2026)', url: 'https://www.bi.go.id/id/publikasi/ruang-media/news-release/Pages/sp_281626.aspx' },
+      { nama: 'Bank Indonesia: Indonesia dan Korea Selatan Resmi Terhubung QR (1 April 2026)', url: 'https://www.bi.go.id/id/publikasi/ruang-media/news-release/Pages/sp_286826.aspx' },
     ],
   },
   {
@@ -300,6 +341,7 @@ const MATERI_BI: Bab[] = [
         judul: 'Dasar hukum',
         isi: [
           'Pengelolaan Rupiah diatur UU No. 7 Tahun 2011 tentang Mata Uang. BI punya tugas dan wewenang di seluruh siklusnya, dengan komitmen menyediakan Rupiah yang layak edar di seluruh wilayah Indonesia sesuai kebutuhan masyarakat.',
+          'Aturan pelaksananya kini PBI No. 3 Tahun 2026 tentang Uang Rupiah Kertas dan Logam, berlaku 31 Maret 2026, yang mencabut PBI No. 21/10/PBI/2019 tentang Pengelolaan Uang Rupiah. PBI ini mengatur ciri dan desain, pengedaran, pencabutan dan penarikan, penggantian uang lusuh atau rusak, serta pengawasan oleh BI.',
         ],
       },
       {
@@ -337,6 +379,7 @@ const MATERI_BI: Bab[] = [
     video: [yt('[Bank Indonesia 101] Ciri-ciri Keaslian Rupiah (CIKUR)', 'lveB_8RMD78', 'Bank Indonesia 101'), yt('Mengenal Ciri Keaslian Uang: Rectoverso dalam Rupiah', 'JAZirp8Y3l8', 'YouTube'), cariYt('Bank Indonesia Cinta Bangga Paham Rupiah')],
     sumber: [
       { nama: 'Bank Indonesia: Pengelolaan Uang Rupiah', url: 'https://www.bi.go.id/id/fungsi-utama/sistem-pembayaran/pengelolaan-rupiah/default.aspx' },
+      { nama: 'Bank Indonesia: PBI No. 3 Tahun 2026 tentang Uang Rupiah Kertas dan Logam', url: 'https://www.bi.go.id/id/publikasi/peraturan/Pages/PBI_032026.aspx' },
       { nama: 'Bank Indonesia: Pencegahan dan Pemberantasan Rupiah Palsu', url: 'https://www.bi.go.id/id/rupiah/pencegahan-rupiah-palsu/default.aspx' },
       { nama: 'Bank Indonesia: FAQ Ciri-Ciri Keaslian Uang Rupiah', url: 'https://www.bi.go.id/id/edukasi/Documents/FAQCiri2KeaslianUang.pdf' },
     ],
@@ -357,6 +400,8 @@ const MATERI_BI: Bab[] = [
           'Mengambil alih pengawasan pasar modal dan industri keuangan nonbank (IKNB) pada 31 Desember 2012, lalu pengawasan perbankan dari BI pada 31 Desember 2013.',
           'Fungsinya: pengaturan dan pengawasan terintegrasi di seluruh sektor jasa keuangan, turut menjaga stabilitas sistem keuangan, serta perlindungan konsumen dan masyarakat.',
           'Cakupan pengawasannya kini meliputi perbankan; pasar modal, derivatif keuangan, dan bursa karbon; perasuransian, penjaminan, dan dana pensiun; lembaga pembiayaan dan keuangan mikro; serta inovasi teknologi sektor keuangan dan aset kripto.',
+          'POJK No. 6 Tahun 2026 (24 Juni 2026) mengatur perilaku penyampai informasi sektor jasa keuangan atau financial influencer. Kegiatannya dibagi tiga: edukasi keuangan, pemasaran (wajib bekerja sama dengan pelaku usaha jasa keuangan), dan rekomendasi produk (bisa memerlukan izin, misalnya izin penasihat investasi).',
+          'Roadmap Pengembangan dan Penguatan Kegiatan Usaha dan Ekosistem Bulion 2026–2031 diluncurkan OJK pada 6 Maret 2026, berdasarkan UU P2SK dan POJK No. 17 Tahun 2024 tentang Penyelenggaraan Kegiatan Usaha Bulion.',
         ],
       },
       {
@@ -366,6 +411,7 @@ const MATERI_BI: Bab[] = [
           'Fungsinya menjamin simpanan nasabah bank dan turut aktif menjaga stabilitas sistem perbankan sesuai kewenangannya.',
           'Nilai simpanan yang dijamin paling tinggi Rp2 miliar per nasabah per bank, berlaku sejak 13 Oktober 2008.',
           'Syarat 3T: Tercatat dalam pembukuan bank; Tingkat bunga tidak melebihi tingkat bunga penjaminan LPS; Tidak merugikan bank (misalnya tidak punya kredit macet atau terlibat fraud).',
+          'UU P2SK menambah mandat LPS menyelenggarakan Program Penjaminan Polis asuransi. Sepanjang 2026 LPS menyiapkan aktivasi program ini, termasuk reorganisasi dan infrastruktur TI.',
         ],
       },
       {
@@ -381,6 +427,7 @@ const MATERI_BI: Bab[] = [
       'OJK: UU 21/2011; pengawasan bank pindah dari BI pada 31 Desember 2013.',
       'LPS: jaminan maksimal Rp2 miliar per nasabah per bank; syarat 3T.',
       'KSSK: Kemenkeu, BI, OJK, LPS (UU 9/2016).',
+      'Finfluencer diatur POJK 6/2026; LPS menyiapkan Program Penjaminan Polis.',
     ],
     video: [
       { judul: 'Kanal resmi LPS (LPS_IDIC Official)', url: 'https://www.youtube.com/c/LPSIDICOfficial', kanal: 'LPS' },
@@ -392,6 +439,9 @@ const MATERI_BI: Bab[] = [
       { nama: 'OJK: Tugas dan Fungsi', url: 'https://ojk.go.id/id/tentang-ojk/pages/tugas-dan-fungsi.aspx' },
       { nama: 'LPS: Simpanan yang Dijamin', url: 'https://lps.go.id/simpanan-yang-dijamin/' },
       { nama: 'LPS: FAQ', url: 'https://lps.go.id/faq/' },
+      { nama: 'LPS: Penjaminan Polis Asuransi', url: 'https://lps.go.id/fungsi-utama/penjaminan-polis-asuransi/' },
+      { nama: 'OJK: POJK No. 6 Tahun 2026 tentang Financial Influencer', url: 'https://ojk.go.id/id/berita-dan-kegiatan/siaran-pers/Pages/POJK-6-Tahun-2026-Perilaku-Penyampai-Informasi-Sektor-Jasa-Keuangan-Financial-Influencer.aspx' },
+      { nama: 'OJK: Roadmap Bulion 2026–2031', url: 'https://ojk.go.id/id/berita-dan-kegiatan/siaran-pers/Pages/OJK-Luncurkan-Roadmap-Bulion-2026-2031.aspx' },
       {
         nama: 'Kemenkeu (BKF): Sosialisasi UU PPKSK',
         url: 'https://fiskal.kemenkeu.go.id/baca/2016/06/21/08174576543668-sosialisasi-undang-undang-pencegahan-dan-penanganan-krisis-sistem-keuangan',
