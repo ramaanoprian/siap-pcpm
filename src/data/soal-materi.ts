@@ -285,4 +285,83 @@ export const SOAL_MATERI: Soal[] = [
     opsi: ['Rp17.000', 'Rp45.000', 'Rp75.000', 'Rp100.000', 'Rp175.000'], kunci: 2,
     bahas: 'BI menerbitkan Uang Peringatan Kemerdekaan 75 Tahun RI pecahan Rp75.000.',
   },
+  // ---------------- Pembaruan Oktober 2026 ----------------
+  {
+    id: 'bi-m38', modul: 'kebanksentralan', topik: 'Kelembagaan',
+    teks: 'Gubernur Bank Indonesia yang dilantik pada 2 September 2026 berdasarkan Keppres No. 92/P Tahun 2026 adalah ...',
+    opsi: ['Perry Warjiyo', 'Aida S. Budiman', 'Destry Damayanti', 'Solikin M. Juhro', 'Juda Agung'], kunci: 2,
+    bahas: 'Pada 2 September 2026 Destry Damayanti dilantik sebagai Gubernur BI, Aida S. Budiman sebagai Deputi Gubernur Senior, dan Solikin M. Juhro sebagai Deputi Gubernur.',
+  },
+  {
+    id: 'bi-m39', modul: 'kebanksentralan', topik: 'Kelembagaan',
+    teks: 'PBI No. 6 Tahun 2026 tentang Pelindungan Konsumen Bank Indonesia mencabut peraturan ...',
+    opsi: ['PBI No. 3 Tahun 2023', 'PBI No. 22/20/PBI/2020', 'POJK No. 22 Tahun 2023', 'UU No. 8 Tahun 1999', 'PBI No. 10 Tahun 2025'], kunci: 0,
+    bahas: 'PBI 6/2026 (berlaku 6 Juni 2026) menggantikan PBI No. 3 Tahun 2023 tentang Pelindungan Konsumen BI. UU 8/1999 adalah UU Perlindungan Konsumen umum, bukan peraturan BI.',
+  },
+  {
+    id: 'bi-m40', modul: 'kebanksentralan', topik: 'Kelembagaan',
+    teks: 'Berikut ini termasuk prinsip pelindungan konsumen dalam PBI No. 6 Tahun 2026, KECUALI ...',
+    opsi: ['Transparansi', 'Perlakuan yang adil', 'Pelindungan aset dan data', 'Persaingan usaha yang sehat', 'Penjaminan simpanan'], kunci: 4,
+    bahas: 'Tujuh prinsipnya: edukasi, transparansi, perlakuan adil, pelindungan aset dan data, penanganan pengaduan, kepatuhan, serta persaingan usaha yang sehat. Penjaminan simpanan adalah fungsi LPS.',
+  },
+  {
+    id: 'bi-m41', modul: 'kebanksentralan', topik: 'Moneter',
+    teks: 'Menurut PMK No. 31 Tahun 2024, sasaran inflasi untuk tahun 2027 adalah ...',
+    opsi: ['3,0±1%', '2,5±1%', '3,5±1%', '2,0±1%', '4,0±1%'], kunci: 1,
+    bahas: 'PMK 31/2024 menetapkan sasaran inflasi 2025, 2026, dan 2027 masing-masing 2,5% dengan deviasi 1%.',
+  },
+  {
+    id: 'bi-m42', modul: 'kebanksentralan', topik: 'Moneter',
+    teks: 'Sasaran inflasi di Indonesia ditetapkan oleh Pemerintah setelah berkoordinasi dengan BI dan dituangkan dalam bentuk ...',
+    opsi: ['Peraturan Bank Indonesia', 'Undang-Undang APBN', 'Peraturan Menteri Keuangan', 'Keputusan Presiden', 'Peraturan OJK'], kunci: 2,
+    bahas: 'Sasaran inflasi ditetapkan lewat Peraturan Menteri Keuangan, misalnya PMK 31/2024 untuk 2025–2027.',
+  },
+  {
+    id: 'bi-m43', modul: 'kebanksentralan', topik: 'Moneter',
+    teks: 'Berdasarkan PBI No. 5 Tahun 2026, pemasukan dan penempatan Devisa Hasil Ekspor sumber daya alam (DHE SDA) hanya dapat dilakukan pada ...',
+    opsi: ['Bank asing', 'Bank Pembangunan Daerah', 'Bank BUMN', 'Seluruh bank devisa', 'Bank Indonesia secara langsung'], kunci: 2,
+    bahas: 'PBI 5/2026 (berlaku 1 Juni 2026) membatasi pemasukan dan penempatan DHE SDA hanya pada Bank BUMN, serta menambah SUN dan SBSN valas sebagai instrumen penempatan.',
+  },
+  {
+    id: 'bi-m44', modul: 'kebanksentralan', topik: 'Sistem Pembayaran',
+    teks: 'Kerangka penilaian kinerja penyelenggara sistem pembayaran dalam PBI No. 10 Tahun 2025 disingkat ...',
+    opsi: ['IKKAT', 'TIKMI', 'CAMELS', 'SNAP', 'GPN'], kunci: 1,
+    bahas: 'TIKMI = Transaksi, Interkoneksi, Kompetensi, Manajemen risiko, dan Infrastruktur teknologi informasi. IKKAT adalah prinsip tata kelola BI.',
+  },
+  {
+    id: 'bi-m45', modul: 'kebanksentralan', topik: 'Sistem Pembayaran',
+    teks: 'Berdasarkan PBI Pengaturan Industri Sistem Pembayaran, paket aktivitas 1A bagi Penyedia Jasa Pembayaran hanya dapat dijalankan oleh ...',
+    opsi: ['PSP Utama', 'PSP selain Utama', 'Bank Perekonomian Rakyat', 'Penyelenggara Infrastruktur Sistem Pembayaran', 'Semua PJP yang berizin'], kunci: 0,
+    bahas: 'PBI 10/2025 mengelompokkan aktivitas PJP menjadi tiga paket. Paket tertinggi 1A khusus untuk penyelenggara berstatus PSP Utama.',
+  },
+  {
+    id: 'bi-m46', modul: 'kebanksentralan', topik: 'Sistem Pembayaran',
+    teks: 'Negara yang resmi terhubung QRIS antarnegara dengan Indonesia pada 1 April 2026 adalah ...',
+    opsi: ['Jepang', 'Korea Selatan', 'Tiongkok', 'Uni Emirat Arab', 'Filipina'], kunci: 1,
+    bahas: 'Interkoneksi QR Indonesia–Korea Selatan diresmikan 1 April 2026 bersama Bank of Korea. Sebelumnya sudah tersambung Thailand, Malaysia, Singapura, dan Jepang (Agustus 2025).',
+  },
+  {
+    id: 'bi-m47', modul: 'kebanksentralan', topik: 'Sistem Pembayaran',
+    teks: 'BSPI 2030 menargetkan volume transaksi pembayaran digital pada tahun 2030 sebanyak ...',
+    opsi: ['14,7 miliar transaksi', '47,3 miliar transaksi', '100 miliar transaksi', '147,3 miliar transaksi', '1,47 triliun transaksi'], kunci: 3,
+    bahas: 'Target BSPI 2030 adalah 147,3 miliar transaksi digital pada 2030, didukung perluasan QRIS, BI-FAST, dan SNAP.',
+  },
+  {
+    id: 'bi-m48', modul: 'kebanksentralan', topik: 'Rupiah',
+    teks: 'PBI No. 3 Tahun 2026 tentang Uang Rupiah Kertas dan Logam mencabut ...',
+    opsi: ['UU No. 7 Tahun 2011 tentang Mata Uang', 'PBI No. 21/10/PBI/2019 tentang Pengelolaan Uang Rupiah', 'PBI No. 6 Tahun 2026', 'UU No. 4 Tahun 2023', 'PBI No. 1 Tahun 2026'], kunci: 1,
+    bahas: 'PBI 3/2026 (berlaku 31 Maret 2026) melaksanakan UU Mata Uang dan mencabut PBI 21/10/PBI/2019. Sebuah PBI tidak bisa mencabut undang-undang.',
+  },
+  {
+    id: 'bi-m49', modul: 'kebanksentralan', topik: 'Makroprudensial & SSK',
+    teks: 'Mandat baru LPS berdasarkan UU P2SK yang sedang disiapkan aktivasinya sepanjang 2026 adalah ...',
+    opsi: ['Pengawasan perbankan', 'Program Penjaminan Polis asuransi', 'Penerbitan uang Rupiah', 'Penetapan sasaran inflasi', 'Pengawasan aset kripto'], kunci: 1,
+    bahas: 'UU P2SK menambah mandat LPS menyelenggarakan Program Penjaminan Polis. Pengawasan perbankan dan aset kripto ada di OJK, penerbitan Rupiah di BI.',
+  },
+  {
+    id: 'bi-m50', modul: 'kebanksentralan', topik: 'Makroprudensial & SSK',
+    teks: 'POJK No. 6 Tahun 2026 mengatur perilaku penyampai informasi sektor jasa keuangan. Dalam kegiatan pemasaran, financial influencer wajib ...',
+    opsi: ['Memiliki izin bank', 'Bekerja sama dengan pelaku usaha jasa keuangan (PUJK)', 'Mendaftar ke Bank Indonesia', 'Menjadi anggota LPS', 'Mendapat persetujuan KSSK'], kunci: 1,
+    bahas: 'POJK 6/2026 membagi kegiatan finfluencer menjadi edukasi, pemasaran (wajib bekerja sama dengan PUJK), dan rekomendasi produk (bisa memerlukan izin seperti penasihat investasi).',
+  },
 ];

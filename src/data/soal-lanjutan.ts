@@ -624,4 +624,41 @@ export const SOAL_LANJUTAN: Soal[] = [
     opsi: ['Posisi 2', 'Posisi 3', 'Posisi 4', 'Posisi 5', 'Tidak dapat ditentukan'], kunci: 2,
     bahas: 'A=1, B=2, C=5. Sisa posisi 3 dan 4. D tidak boleh di 4 (bersebelahan dengan C), jadi D=3 dan E=4.',
   },
+  // ---------------- Pembaruan Oktober 2026 ----------------
+  {
+    id: 'pd-v16', modul: 'potensi-dasar', topik: 'Verbal',
+    teks: 'Antonim dari EKSPANSIF adalah ...',
+    opsi: ['Agresif', 'Kontraktif', 'Progresif', 'Inklusif', 'Produktif'], kunci: 1,
+    bahas: 'Ekspansif berarti bersifat meluas atau melonggarkan. Lawannya kontraktif, misalnya kebijakan moneter kontraktif lawan ekspansif.',
+  },
+  {
+    id: 'pd-v17', modul: 'potensi-dasar', topik: 'Verbal',
+    teks: 'REGULATOR : ATURAN = ... : ...',
+    opsi: ['Hakim : putusan', 'Nasabah : rekening', 'Pasien : obat', 'Penonton : film', 'Siswa : sekolah'], kunci: 0,
+    bahas: 'Regulator menetapkan aturan; hakim menetapkan putusan. Pasangan lain bukan hubungan pembuat dan hasil.',
+  },
+  {
+    id: 'pd-l16', modul: 'potensi-dasar', topik: 'Logika',
+    teks: 'Semua penyelenggara berstatus PSP Utama boleh menjalankan paket 1A. PT X tidak boleh menjalankan paket 1A. Kesimpulan yang tepat adalah ...',
+    opsi: ['PT X adalah PSP Utama', 'PT X bukan PSP Utama', 'PT X adalah bank', 'Sebagian PSP Utama tidak boleh menjalankan paket 1A', 'Tidak dapat disimpulkan'], kunci: 1,
+    bahas: 'Modus tollens: jika PSP Utama maka boleh 1A. PT X tidak boleh 1A, jadi PT X bukan PSP Utama.',
+  },
+  {
+    id: 'pd-l17', modul: 'potensi-dasar', topik: 'Logika',
+    teks: 'Jika sebuah bank menaikkan suku bunga deposito, maka dana pihak ketiganya bertambah. Dana pihak ketiga Bank Y tidak bertambah. Kesimpulan yang sah adalah ...',
+    opsi: ['Bank Y menaikkan suku bunga deposito', 'Bank Y tidak menaikkan suku bunga deposito', 'Bank Y menurunkan suku bunga kredit', 'Dana pihak ketiga Bank Y berkurang', 'Tidak dapat disimpulkan'], kunci: 1,
+    bahas: 'Modus tollens: jika P maka Q; tidak Q; maka tidak P. Pilihan D tidak pasti karena "tidak bertambah" bisa berarti tetap.',
+  },
+  {
+    id: 'en-v21', modul: 'english', topik: 'Vocabulary',
+    teks: 'The central bank decided to keep its policy rate unchanged. The word "unchanged" is closest in meaning to ...',
+    opsi: ['Increased', 'Steady', 'Reduced', 'Abolished', 'Reversed'], kunci: 1,
+    bahas: '"Unchanged" berarti tidak berubah, paling dekat dengan "steady" (tetap/stabil).',
+  },
+  {
+    id: 'en-v22', modul: 'english', topik: 'Vocabulary',
+    teks: 'New rules require financial influencers to avoid misleading content. "Misleading" means ...',
+    opsi: ['Giving a wrong impression', 'Very popular', 'Hard to read', 'Officially approved', 'Free of charge'], kunci: 0,
+    bahas: '"Misleading" berarti menyesatkan, yaitu memberi kesan yang keliru.',
+  },
 ];
